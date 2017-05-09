@@ -24,10 +24,13 @@
     json-mode
     json-snatcher
     (tern :toggle (spacemacs//tern-detect))
+    (vue-mode :location (recipe
+                         :fetcher github
+                         :repo "codefalling/vue-mode"))
     web-beautify
-    skewer-mode
-    livid-mode
     ))
+(defun javascript/init-vue-mode ()
+  (use-package vue-mode))
 
 (defun javascript/init-coffee-mode ()
   (use-package coffee-mode
