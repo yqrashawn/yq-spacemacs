@@ -19,7 +19,7 @@
         ("https" . "127.0.0.1:6152")))
 (setq gc-cons-threshold 100000000)
 
-(defconst spacemacs-version          "0.200.8" "Spacemacs version.")
+(defconst spacemacs-version          "0.200.9" "Spacemacs version.")
 (defconst spacemacs-emacs-min-version   "24.4" "Minimal version of Emacs.")
 
 (if (not (version<= spacemacs-emacs-min-version emacs-version))
