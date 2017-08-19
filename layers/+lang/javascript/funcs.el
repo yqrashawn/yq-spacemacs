@@ -85,6 +85,8 @@
   "Set the key bindings for tern and the given MODE."
   (add-to-list (intern (format "spacemacs-jump-handlers-%S" mode))
             '(tern-find-definition :async t))
+  (add-to-list (intern (format "spacemacs-jump-handlers-%S" mode))
+               '(dumb-jump-go :async t))
   (spacemacs/set-leader-keys-for-major-mode mode
     "rrV" 'tern-rename-variable
     "hd" 'tern-get-docs
