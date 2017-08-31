@@ -11,13 +11,13 @@
 
 (setq javascript-packages
   '(
-    coffee-mode
+    ;; coffee-mode
     company
     (company-tern :toggle (configuration-layer/package-usedp 'company))
     evil-matchit
     flycheck
-    ggtags
-    helm-gtags
+    ;; ggtags
+    ;; helm-gtags
     js-doc
     js2-mode
     js2-refactor
@@ -186,38 +186,3 @@
         "=" 'web-beautify-html)
       (spacemacs/set-leader-keys-for-major-mode 'css-mode
         "=" 'web-beautify-css))))
-
-(defun javascript/init-skewer-mode ()
-  (use-package skewer-mode
-    :defer t
-    :init
-    (progn
-      (spacemacs/register-repl 'skewer-mode
-                               'spacemacs/skewer-start-repl
-                               "skewer")
-      (add-hook 'js2-mode-hook 'skewer-mode))
-    :config
-    (progn
-      (spacemacs|hide-lighter skewer-mode)
-      (spacemacs/declare-prefix-for-mode 'js2-mode "ms" "skewer")
-      (spacemacs/declare-prefix-for-mode 'js2-mode "me" "eval")
-      (spacemacs/set-leader-keys-for-major-mode 'js2-mode
-        "'" 'spacemacs/skewer-start-repl
-        "ee" 'skewer-eval-last-expression
-        "eE" 'skewer-eval-print-last-expression
-        "sb" 'skewer-load-buffer
-        "sB" 'spacemacs/skewer-load-buffer-and-focus
-        "si" 'spacemacs/skewer-start-repl
-        "sf" 'skewer-eval-defun
-        "sF" 'spacemacs/skewer-eval-defun-and-focus
-        "sr" 'spacemacs/skewer-eval-region
-        "sR" 'spacemacs/skewer-eval-region-and-focus
-        "ss" 'skewer-repl))))
-
-(defun javascript/init-livid-mode ()
-  (use-package livid-mode
-    :defer t
-    :init (spacemacs|add-toggle javascript-repl-live-evaluation
-            :mode livid-mode
-            :documentation "Live evaluation of JS buffer change."
-            :evil-leader-for-mode (js2-mode . "sa"))))
