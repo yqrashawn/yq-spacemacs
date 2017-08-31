@@ -20,7 +20,7 @@
         popup
         popwin
         ;; (smooth-scrolling :location built-in)
-        ;; spaceline
+        spaceline
         ;; (zoom-frm :location local)
         ))
 

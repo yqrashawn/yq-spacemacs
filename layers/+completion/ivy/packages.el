@@ -24,7 +24,7 @@
         (ivy-spacemacs-help :location local)
         ;; persp-mode
         projectile
-        ;; smex
+        smex
         swiper
         wgrep
         ))
@@ -212,12 +212,12 @@
 ;; (defun ivy/post-init-bookmark ()
 ;; (spacemacs/set-leader-keys "fb" 'counsel-bookmark))
 
-;; (defun ivy/init-smex ()
-;;   (use-package smex
-;;     :defer t
-;;     :init (setq-default smex-history-length 32
-;;                         smex-save-file (concat spacemacs-cache-directory
-;;                                                ".smex-items"))))
+(defun ivy/init-smex ()
+  (use-package smex
+    :defer t
+    :init (setq-default smex-history-length 32
+                        smex-save-file (concat spacemacs-cache-directory
+                                               ".smex-items"))))
 
 (defun ivy/init-ivy-spacemacs-help ()
   (use-package ivy-spacemacs-help

@@ -41,7 +41,7 @@
   "Spacemacs-theme options."
   :group 'faces)
 
-(defcustom spacemacs-theme-comment-bg t
+(defcustom spacemacs-theme-comment-bg nil
   "Use a background for comment lines."
   :type 'boolean
   :group 'spacemacs-theme)
