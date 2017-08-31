@@ -15,8 +15,6 @@
 (defvar spacemacs--counsel-commands
   '(("rg" . "rg --smart-case --no-heading --vimgrep %s %S .")
     ("ag" . "ag --nocolor --nogroup %s %S .")
-    ("pt" . "pt -e --nocolor --nogroup %s %S .")
-    ("ack" . "ack --nocolor --nogroup %s %S .")
     ("grep" . "grep -nrP %s %S ."))
   "Alist of search commands and their corresponding commands
 with options to run in the shell.")
