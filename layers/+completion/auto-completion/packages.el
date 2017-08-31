@@ -11,59 +11,60 @@
 
 (setq auto-completion-packages
       '(
-        auto-complete
-        ac-ispell
+        ;; auto-complete
+        ;; ac-ispell
         company
-        (company-quickhelp :toggle auto-completion-enable-help-tooltip)
-        company-statistics
-        fuzzy
-        (helm-company :toggle (configuration-layer/package-usedp 'helm))
-        (helm-c-yasnippet :toggle (configuration-layer/package-usedp 'helm))
+        ;; (company-quickhelp :toggle auto-completion-enable-help-tooltip)
+        ;; company-statistics
+        ;; fuzzy
+        ;; (helm-company :toggle (configuration-layer/package-usedp 'helm))
+        ;; (helm-c-yasnippet :toggle (configuration-layer/package-usedp 'helm))
         hippie-exp
         yasnippet
         auto-yasnippet
         smartparens
         ))
 
-;; TODO replace by company-ispell which comes with company
-;; to be moved to spell-checking layer as well
-(defun auto-completion/init-ac-ispell ()
-  (use-package ac-ispell
-    :defer t
-    :init
-    (progn
-      (setq ac-ispell-requires 4)
-      (with-eval-after-load 'auto-complete
-        (ac-ispell-setup))
-      ;; (add-hook 'markdown-mode-hook 'ac-ispell-ac-setup)
-      )))
+;; ;; TODO replace by company-ispell which comes with company
+;; ;; to be moved to spell-checking layer as well
+;; (defun auto-completion/init-ac-ispell ()
+;;   (use-package ac-ispell
+;;     :defer t
+;;     :init
+;;     (progn
+;;       (setq ac-ispell-requires 4)
+;;       (with-eval-after-load 'auto-complete
+;;         (ac-ispell-setup))
+;;       ;; (add-hook 'markdown-mode-hook 'ac-ispell-ac-setup)
+;;       )))
 
-(defun auto-completion/init-auto-complete ()
-  (use-package auto-complete
-    :defer t
-    :init
-    (setq ac-auto-start 0
-          ac-delay 0.2
-          ac-quick-help-delay 1.
-          ac-use-fuzzy t
-          ac-fuzzy-enable t
-          ac-comphist-file (concat spacemacs-cache-directory "ac-comphist.dat")
-          ;; use 'complete when auto-complete is disabled
-          tab-always-indent 'complete
-          ac-dwim t)
-    :config
-    (progn
-      (require 'auto-complete-config)
-      (setq-default ac-sources '(ac-source-abbrev
-                                 ac-source-dictionary
-                                 ac-source-words-in-same-mode-buffers))
-      (when (configuration-layer/package-usedp 'yasnippet)
-        (push 'ac-source-yasnippet ac-sources))
-      (add-to-list 'completion-styles 'initials t)
-      (define-key ac-completing-map (kbd "C-j") 'ac-next)
-      (define-key ac-completing-map (kbd "C-k") 'ac-previous)
-      (define-key ac-completing-map (kbd "<S-tab>") 'ac-previous)
-      (spacemacs|diminish auto-complete-mode " ⓐ" " a"))))
+;; (defun auto-completion/init-auto-complete ()
+;;   (use-package auto-complete
+;;     :defer t
+;;     :init
+;;     (setq ac-auto-start 0
+;;           ac-delay 0.2
+;;           ac-quick-help-delay 1.
+;;           ac-use-fuzzy t
+;;           ac-fuzzy-enable t
+;;           ac-comphist-file (concat spacemacs-cache-directory "ac-comphist.dat")
+;;           ;; use 'complete when auto-complete is disabled
+;;           tab-always-indent 'complete
+;;           ac-dwim t)
+;;     :config
+;;     (progn
+;;       (require 'auto-complete-config)
+;;       (setq-default ac-sources '(ac-source-abbrev
+;;                                  ac-source-dictionary
+;;                                  ac-source-words-in-same-mode-buffers))
+;;       (when (configuration-layer/package-usedp 'yasnippet)
+;;         (push 'ac-source-yasnippet ac-sources))
+;;       (add-to-list 'completion-styles 'initials t)
+;;       (define-key ac-completing-map (kbd "C-j") 'ac-next)
+;;       (define-key ac-completing-map (kbd "C-k") 'ac-previous)
+;;       (define-key ac-completing-map (kbd "<S-tab>") 'ac-previous)
+;;       ;; (spacemacs|diminish auto-complete-mode " ⓐ" " a")
+;;       (diminish auto-complete-mode ""))))
 
 (defun auto-completion/init-company ()
   (use-package company
@@ -81,7 +82,8 @@
       (add-hook 'company-completion-cancelled-hook 'company-maybe-turn-on-fci))
     :config
     (progn
-      (spacemacs|diminish company-mode " ⓐ" " a")
+      (spacemacs|diminish company-mode "" "")
+      ;; (spacemacs|diminish company-mode " ⓐ" " a")
 
       ;; key bindings
       (defun spacemacs//company-complete-common-or-cycle-backward ()
@@ -103,45 +105,45 @@
       (setq company-transformers '(spacemacs//company-transformer-cancel
                                    company-sort-by-occurrence)))))
 
-(defun auto-completion/init-company-statistics ()
-  (use-package company-statistics
-    :if auto-completion-enable-sort-by-usage
-    :defer t
-    :init
-    (progn
-      (setq company-statistics-file (concat spacemacs-cache-directory
-                                            "company-statistics-cache.el"))
-      (add-hook 'company-mode-hook 'company-statistics-mode))))
+;; (defun auto-completion/init-company-statistics ()
+;;   (use-package company-statistics
+;;     :if auto-completion-enable-sort-by-usage
+;;     :defer t
+;;     :init
+;;     (progn
+;;       (setq company-statistics-file (concat spacemacs-cache-directory
+;;                                             "company-statistics-cache.el"))
+;;       (add-hook 'company-mode-hook 'company-statistics-mode))))
 
-(defun auto-completion/init-fuzzy ()
-  (use-package fuzzy :defer t))
+;; (defun auto-completion/init-fuzzy ()
+;;   (use-package fuzzy :defer t))
 
-(defun auto-completion/init-company-quickhelp ()
-  (use-package company-quickhelp
-    :commands company-quickhelp-manual-begin
-    :init
-    (spacemacs|do-after-display-system-init
-     (with-eval-after-load 'company
-       (setq company-frontends (delq 'company-echo-metadata-frontend company-frontends))
-       (define-key company-active-map (kbd "M-h") #'company-quickhelp-manual-begin)
-       (unless (eq auto-completion-enable-help-tooltip 'manual)
-         (company-quickhelp-mode))))))
+;; (defun auto-completion/init-company-quickhelp ()
+;;   (use-package company-quickhelp
+;;     :commands company-quickhelp-manual-begin
+;;     :init
+;;     (spacemacs|do-after-display-system-init
+;;      (with-eval-after-load 'company
+;;        (setq company-frontends (delq 'company-echo-metadata-frontend company-frontends))
+;;        (define-key company-active-map (kbd "M-h") #'company-quickhelp-manual-begin)
+;;        (unless (eq auto-completion-enable-help-tooltip 'manual)
+;;          (company-quickhelp-mode))))))
 
-(defun auto-completion/init-helm-c-yasnippet ()
-  (use-package helm-c-yasnippet
-    :defer t
-    :init
-    (progn
-      (spacemacs/set-leader-keys "is" 'spacemacs/helm-yas)
-      (setq helm-c-yas-space-match-any-greedy t))))
+;; (defun auto-completion/init-helm-c-yasnippet ()
+;;   (use-package helm-c-yasnippet
+;;     :defer t
+;;     :init
+;;     (progn
+;;       (spacemacs/set-leader-keys "is" 'spacemacs/helm-yas)
+;;       (setq helm-c-yas-space-match-any-greedy t))))
 
-(defun auto-completion/init-helm-company ()
-  (use-package helm-company
-    :if (configuration-layer/package-usedp 'company)
-    :defer t
-    :init
-    (with-eval-after-load 'company
-      (define-key company-active-map (kbd "C-/") 'helm-company))))
+;; (defun auto-completion/init-helm-company ()
+;;   (use-package helm-company
+;;     :if (configuration-layer/package-usedp 'company)
+;;     :defer t
+;;     :init
+;;     (with-eval-after-load 'company
+;;       (define-key company-active-map (kbd "C-/") 'helm-company))))
 
 (defun auto-completion/init-hippie-exp ()
   ;; replace dabbrev-expand
@@ -201,8 +203,8 @@
                                  configuration-layer-private-directory
                                  "snippets/")))
              (spacemacs-layer-snippets-dir (expand-file-name
-                                      "snippets"
-                                      spacemacs--auto-completion-dir))
+                                            "snippets"
+                                            spacemacs--auto-completion-dir))
              (dotspacemacs-directory-snippets-dir (when dotspacemacs-directory
                                                     (expand-file-name
                                                      "snippets"
@@ -233,7 +235,8 @@
        'spacemacs/force-yasnippet-off '(term-mode-hook
                                         shell-mode-hook
                                         eshell-mode-hook)))
-    :config (spacemacs|diminish yas-minor-mode " ⓨ" " y")))
+    :config (spacemacs|diminish yas-minor-mode "" "")))
+;; :config (spacemacs|diminish yas-minor-mode " ⓨ" " y")))
 
 (defun auto-completion/init-auto-yasnippet ()
   (use-package auto-yasnippet

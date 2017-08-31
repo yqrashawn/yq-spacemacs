@@ -12,19 +12,19 @@
 (setq spacemacs-editing-visual-packages
       '(
         ;; default
-        adaptive-wrap
-        auto-highlight-symbol
-        column-enforce-mode
+        ;; adaptive-wrap
+        ;; auto-highlight-symbol
+        ;; column-enforce-mode
         hide-comnt
         highlight-indentation
-        highlight-numbers
-        highlight-parentheses
+        ;; highlight-numbers
+        ;; highlight-parentheses
         ;; waiting for an overlay bug to be fixed
         ;; see https://github.com/syl20bnr/spacemacs/issues/2529
-        (hl-anything :excluded t)
-        indent-guide
-        rainbow-delimiters
-        volatile-highlights
+        ;; (hl-anything :excluded t)
+        ;; indent-guide
+        ;; rainbow-delimiters
+        ;; volatile-highlights
         ))
 
 ;; Initialization of packages
