@@ -285,7 +285,7 @@ debug-init and load the given list of packages."
           0))
       (setq winum-auto-assign-0-to-minibuffer nil
             winum-assign-func 'spacemacs//winum-assign-func
-            winum-auto-setup-mode-line nil
+            winum-auto-setup-mode-line t
             winum-ignored-buffers '(" *which-key*"))
       (spacemacs/set-leader-keys
         "`" 'winum-select-window-by-number
