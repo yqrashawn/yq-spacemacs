@@ -160,6 +160,7 @@ Current Action: %s(ivy-action-name)
       ;; actions
       ("q" keyboard-escape-quit :exit t)
       ("C-g" keyboard-escape-quit :exit t)
+      ("C-s-9" keyboard-escape-quit :exit t)
       ("<escape>" keyboard-escape-quit :exit t)
       ("i" nil)
       ("C-o" nil)
