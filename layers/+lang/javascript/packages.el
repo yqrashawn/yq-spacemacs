@@ -10,37 +10,27 @@
 ;;; License: GPLv3
 
 (setq javascript-packages
-  '(
-    ;; coffee-mode
-    company
-    (company-tern :toggle (configuration-layer/package-usedp 'company))
-    evil-matchit
-    flycheck
-    ;; ggtags
-    ;; helm-gtags
-    js-doc
-    js2-mode
-    js2-refactor
-    json-mode
-    json-snatcher
-    (tern :toggle (spacemacs//tern-detect))
-    (vue-mode :location (recipe
-                         :fetcher github
-                         :repo "codefalling/vue-mode"))
-    web-beautify
-    ))
+      '(
+        company
+        (company-tern :toggle (configuration-layer/package-usedp 'company))
+        evil-matchit
+        flycheck
+        js-doc
+        js2-mode
+        js2-refactor
+        json-mode
+        json-snatcher
+        (tern :toggle (spacemacs//tern-detect))
+        web-beautify
+        skewer-mode
+        livid-mode
+        (vue-mode :location (recipe
+                             :fetcher github
+                             :repo "codefalling/vue-mode"))
+        ))
+
 (defun javascript/init-vue-mode ()
   (use-package vue-mode))
-
-(defun javascript/init-coffee-mode ()
-  (use-package coffee-mode
-    :defer t
-    :init
-    (progn
-      ;; indent to right position after `evil-open-below' and `evil-open-above'
-      (add-hook 'coffee-mode-hook '(lambda ()
-                                     (setq indent-line-function 'javascript/coffee-indent
-                                           evil-shift-width coffee-tab-width))))))
 
 (defun javascript/post-init-company ()
   (spacemacs|add-company-hook js2-mode))
@@ -56,12 +46,6 @@
 (defun javascript/post-init-flycheck ()
   (dolist (mode '(coffee-mode js2-mode json-mode))
     (spacemacs/add-flycheck-hook mode)))
-
-(defun javascript/post-init-ggtags ()
-  (add-hook 'js2-mode-local-vars-hook #'spacemacs/ggtags-mode-enable))
-
-(defun javascript/post-init-helm-gtags ()
-  (spacemacs/helm-gtags-define-keys-for-mode 'js2-mode))
 
 (defun javascript/init-js-doc ()
   (use-package js-doc
@@ -186,3 +170,38 @@
         "=" 'web-beautify-html)
       (spacemacs/set-leader-keys-for-major-mode 'css-mode
         "=" 'web-beautify-css))))
+
+(defun javascript/init-skewer-mode ()
+  (use-package skewer-mode
+    :defer t
+    :init
+    (progn
+      (spacemacs/register-repl 'skewer-mode
+                               'spacemacs/skewer-start-repl
+                               "skewer")
+      (add-hook 'js2-mode-hook 'skewer-mode))
+    :config
+    (progn
+      (spacemacs|hide-lighter skewer-mode)
+      (spacemacs/declare-prefix-for-mode 'js2-mode "ms" "skewer")
+      (spacemacs/declare-prefix-for-mode 'js2-mode "me" "eval")
+      (spacemacs/set-leader-keys-for-major-mode 'js2-mode
+        "'" 'spacemacs/skewer-start-repl
+        "ee" 'skewer-eval-last-expression
+        "eE" 'skewer-eval-print-last-expression
+        "sb" 'skewer-load-buffer
+        "sB" 'spacemacs/skewer-load-buffer-and-focus
+        "si" 'spacemacs/skewer-start-repl
+        "sf" 'skewer-eval-defun
+        "sF" 'spacemacs/skewer-eval-defun-and-focus
+        "sr" 'spacemacs/skewer-eval-region
+        "sR" 'spacemacs/skewer-eval-region-and-focus
+        "ss" 'skewer-repl))))
+
+(defun javascript/init-livid-mode ()
+  (use-package livid-mode
+    :defer t
+    :init (spacemacs|add-toggle javascript-repl-live-evaluation
+            :mode livid-mode
+            :documentation "Live evaluation of JS buffer change."
+            :evil-leader-for-mode (js2-mode . "sa"))))
