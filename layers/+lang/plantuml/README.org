@@ -2,10 +2,11 @@
 [[file:img/logo.png]]
 
 * Table of Contents                                        :TOC_4_gh:noexport:
- - [[#description][Description]]
- - [[#install][Install]]
- - [[#org-babel-integration][Org-Babel Integration]]
- - [[#key-bindings][Key bindings]]
+- [[#description][Description]]
+  - [[#features][Features:]]
+- [[#install][Install]]
+- [[#org-babel-integration][Org-Babel Integration]]
+- [[#key-bindings][Key bindings]]
 
 * Description
 This layer enables support for [[https://github.com/skuro/plantuml-mode][plantuml-mode]], which provides
@@ -31,6 +32,10 @@ robbyoconnor->theOtherPerson : And they thinks it's funny? Yup, they definitely 
 
 [[file:img/dia.png]]
 
+** Features:
+  - Diagram preview in various output formats
+  - Embedding into org documents
+
 * Install
 To use this contribution add it to your =~/.spacemacs=
 
@@ -39,7 +44,6 @@ To use this contribution add it to your =~/.spacemacs=
 #+end_src
 
 * Org-Babel Integration
-
 To enable the execution of embedded plantuml code blocks within [[http://orgmode.org/][Org-Mode]]
 documents, define a value for =org-plantuml-jar-path= in your =~/.spacemacs=.
 
@@ -48,4 +52,4 @@ documents, define a value for =org-plantuml-jar-path= in your =~/.spacemacs=.
 | Key Binding              | Description                                           |
 |--------------------------+-------------------------------------------------------|
 | ~SPC m c c~ or ~C-c C-c~ | Build diagram from the text in the current buffer     |
-| ~SPC m c o~              | Set the output type (~unicode text~, ~svg~, or ~png~) |
+| ~SPC m c o~              | Set the output type (=unicode text=, =svg=, or =png=) |

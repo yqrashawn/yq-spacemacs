@@ -15,7 +15,12 @@
       (call-interactively 'emmet-expand-yas)
     (call-interactively 'emmet-expand-line)))
 
-;; see https://github.com/osv/company-web/issues/4
-(defun spacemacs//company-web-minimum-prefix-length ()
-  "Set company minimum prefix length to 0 for the current buffer only."
-  (set (make-local-variable 'company-minimum-prefix-length) 0))
+(defun spacemacs/impatient-mode ()
+  (interactive)
+  (if (bound-and-true-p impatient-mode)
+      (impatient-mode -1)
+    (unless (process-status "httpd")
+        (httpd-start))
+    (impatient-mode)
+    (when (string-match-p "\\.html\\'" (buffer-name))
+      (imp-visit-buffer))))

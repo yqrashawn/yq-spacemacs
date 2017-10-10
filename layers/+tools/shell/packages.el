@@ -38,8 +38,7 @@
   (spacemacs|use-package-add-hook eshell
     :post-init
     (progn
-      (push 'company-capf company-backends-eshell-mode)
-      (spacemacs|add-company-hook eshell-mode)
+      (spacemacs|add-company-backends :backends company-capf :modes eshell-mode)
       (add-hook 'eshell-directory-change-hook
                 'spacemacs//toggle-shell-auto-completion-based-on-path)
       ;; The default frontend screws everything up in short windows like
@@ -84,6 +83,23 @@
       (add-hook 'eshell-mode-hook 'spacemacs/disable-hl-line-mode))
     :config
     (progn
+
+      ;; Work around bug in eshell's preoutput-filter code.
+      ;; Eshell doesn't call preoutput-filter functions in the context of the eshell
+      ;; buffer. This breaks the xterm color filtering when the eshell buffer is updated
+      ;; when it's not currently focused.
+      ;; To remove if/when fixed upstream.
+      (defun eshell-output-filter@spacemacs-with-buffer (fn process string)
+        (let ((proc-buf (if process (process-buffer process)
+                          (current-buffer))))
+          (when proc-buf
+            (with-current-buffer proc-buf
+              (funcall fn process string)))))
+      (advice-add
+       #'eshell-output-filter
+       :around
+       #'eshell-output-filter@spacemacs-with-buffer)
+
       (require 'esh-opt)
 
       ;; quick commands

@@ -12,6 +12,7 @@
 (setq lua-packages
       '(
         company
+        (company-lua :requires company)
         flycheck
         ggtags
         helm-gtags
@@ -19,7 +20,7 @@
         ))
 
 (defun lua/post-init-flycheck ()
-  (spacemacs/add-flycheck-hook 'lua-mode))
+  (spacemacs/enable-flycheck 'lua-mode))
 
 (defun lua/init-lua-mode ()
   (use-package lua-mode
@@ -39,6 +40,13 @@
 
 (defun lua/post-init-company ()
   (add-hook 'lua-mode-hook 'company-mode))
+
+(defun lua/init-company-lua ()
+  (use-package company-lua
+    :defer t
+    :init (spacemacs|add-company-backends
+            :backends company-lua
+            :modes lua-mode)))
 
 (defun lua/post-init-ggtags ()
   (add-hook 'lua-mode-local-vars-hook #'spacemacs/ggtags-mode-enable))

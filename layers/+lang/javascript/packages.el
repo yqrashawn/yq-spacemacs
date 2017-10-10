@@ -11,10 +11,15 @@
 
 (setq javascript-packages
       '(
+        add-node-modules-path
+        coffee-mode
         company
-        (company-tern :toggle (configuration-layer/package-usedp 'company))
+        (company-tern :requires company)
         evil-matchit
         flycheck
+        ggtags
+        ;; helm-gtags
+        ;; impatient-mode
         js-doc
         js2-mode
         js2-refactor
@@ -35,17 +40,38 @@
 (defun javascript/post-init-company ()
   (spacemacs|add-company-hook js2-mode))
 
+(defun javascript/post-init-add-node-modules-path ()
+  (add-hook 'css-mode-hook #'add-node-modules-path)
+  (add-hook 'coffee-mode-hook #'add-node-modules-path)
+  (add-hook 'js2-mode-hook #'add-node-modules-path)
+  (add-hook 'json-mode-hook #'add-node-modules-path))
+
 (defun javascript/init-company-tern ()
   (use-package company-tern
-    :if (and (configuration-layer/package-usedp 'company)
-             (configuration-layer/package-usedp 'tern))
+    :if (and (configuration-layer/package-used-p 'company)
+             (configuration-layer/package-used-p 'tern))
     :defer t
-    :init
-    (push 'company-tern company-backends-js2-mode)))
+    :init (spacemacs|add-company-backends
+            :backends company-tern
+            :modes js2-mode)))
+
+(defun javascript/post-init-company ()
+  (spacemacs|add-company-backends
+    :backends company-capf
+    :modes coffee-mode))
 
 (defun javascript/post-init-flycheck ()
   (dolist (mode '(coffee-mode js2-mode json-mode))
-    (spacemacs/add-flycheck-hook mode)))
+    (spacemacs/enable-flycheck mode)))
+
+(defun javascript/post-init-ggtags ()
+  (add-hook 'js2-mode-local-vars-hook #'spacemacs/ggtags-mode-enable))
+
+(defun javascript/post-init-helm-gtags ()
+  (spacemacs/helm-gtags-define-keys-for-mode 'js2-mode))
+
+;; (defun javascript/post-init-impatient-mode ()
+;;   (spacemacs/set-leader-keys-for-major-mode 'js2-mode "i" 'spacemacs/impatient-mode))
 
 (defun javascript/init-js-doc ()
   (use-package js-doc

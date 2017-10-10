@@ -15,6 +15,7 @@
         ;; avy
         (bracketed-paste :toggle (version<= emacs-version "25.0.92"))
         clean-aindent-mode
+        editorconfig
         eval-sexp-fu
         expand-region
         (hexl :location built-in)
@@ -23,8 +24,10 @@
         ;; lorem-ipsum
         move-text
         ;; (origami :toggle (eq 'origami dotspacemacs-folding-method))
+        ;; password-generator
         smartparens
         (spacemacs-whitespace-cleanup :location local)
+        ;; string-inflection
         undo-tree
         ;; uuidgen
         ws-butler
@@ -90,6 +93,13 @@
   (use-package clean-aindent-mode
     :config (clean-aindent-mode)))
 
+(defun spacemacs-editing/init-editorconfig ()
+  (use-package editorconfig
+    :init
+    (spacemacs|diminish editorconfig-mode)
+    :config
+    (editorconfig-mode t)))
+
 (defun spacemacs-editing/init-eval-sexp-fu ()
   ;; ignore obsolete function warning generated on startup
   (let ((byte-compile-not-obsolete-funcs (append byte-compile-not-obsolete-funcs '(preceding-sexp))))
@@ -102,7 +112,7 @@
     :config
     (progn
       ;; add search capability to expand-region
-      (when (configuration-layer/package-usedp 'helm-ag)
+      (when (configuration-layer/package-used-p 'helm-ag)
         (defadvice er/prepare-for-more-expansions-internal
             (around helm-ag/prepare-for-more-expansions-internal activate)
           ad-do-it
@@ -253,6 +263,19 @@
       ;; evil config;;
 ;;       )))
 
+;; (defun spacemacs-editing/init-password-generator ()
+;;   (use-package password-generator
+;;     :defer t
+;;     :init
+;;     (progn
+;;       (spacemacs/declare-prefix "ip" "passwords")
+;;       (evil-leader/set-key
+;;         "ip1" 'password-generator-simple
+;;         "ip2" 'password-generator-strong
+;;         "ip3" 'password-generator-paranoid
+;;         "ipp" 'password-generator-phonetic
+;;         "ipn" 'password-generator-numeric))))
+
 (defun spacemacs-editing/init-smartparens ()
   (use-package smartparens
     :defer t
@@ -260,7 +283,10 @@
     :init
     (progn
       ;; settings
-      (setq sp-show-pair-delay 0.2
+      (setq sp-show-pair-delay
+            ;; Use this form to allow users to override this setting from
+            ;; dotspacemacs/user-init
+            (or (bound-and-true-p sp-show-pair-delay) 0.2)
             ;; fix paren highlighting in normal mode
             sp-show-pair-from-inside t
             sp-cancel-autoskip-on-backward-movement nil
@@ -334,14 +360,47 @@
       (spacemacs|diminish global-spacemacs-whitespace-cleanup-mode
                           " Ⓦ" " W"))))
 
+;; (defun spacemacs-editing/init-string-inflection ()
+;;   (use-package string-inflection
+;;     :init
+;;     (progn
+;;       (spacemacs|define-transient-state string-inflection
+;;         :title "String Inflection Transient State"
+;;         :doc "\n [_i_] cycle"
+;;         :bindings
+;;         ("i" string-inflection-all-cycle))
+;;       (spacemacs/declare-prefix "xi" "inflection")
+;;       (spacemacs/set-leader-keys
+;;         "xic" 'string-inflection-lower-camelcase
+;;         "xiC" 'string-inflection-camelcase
+;;         "xii" 'spacemacs/string-inflection-transient-state/body
+;;         "xi-" 'string-inflection-kebab-case
+;;         "xik" 'string-inflection-kebab-case
+;;         "xi_" 'string-inflection-underscore
+;;         "xiu" 'string-inflection-underscore
+;;         "xiU" 'string-inflection-upcase))))
+
 (defun spacemacs-editing/init-undo-tree ()
   (use-package undo-tree
     :init
-    (global-undo-tree-mode)
-    (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)
+    (progn
+      (global-undo-tree-mode)
+      (setq undo-tree-visualizer-timestamps t
+            undo-tree-visualizer-diff t))
     :config
-    (spacemacs|hide-lighter undo-tree-mode)))
+    (progn
+      ;; restore diff window after quit.  TODO fix upstream
+      (defun spacemacs/undo-tree-restore-default ()
+        (setq undo-tree-visualizer-diff t))
+      (advice-add 'undo-tree-visualizer-quit :after #'spacemacs/undo-tree-restore-default)
+      (spacemacs|hide-lighter undo-tree-mode)
+      (evilified-state-evilify-map undo-tree-visualizer-mode-map
+        :mode undo-tree-visualizer-mode
+        :bindings
+        (kbd "j") 'undo-tree-visualize-redo
+        (kbd "k") 'undo-tree-visualize-undo
+        (kbd "h") 'undo-tree-visualize-switch-branch-left
+        (kbd "l") 'undo-tree-visualize-switch-branch-right))))
 
 ;; (defun spacemacs-editing/init-uuidgen ()
 ;;   (use-package uuidgen

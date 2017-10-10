@@ -1,25 +1,26 @@
 #+TITLE: Helm Gtags layer
 
 * Table of Contents                                          :TOC_4_gh:noexport:
- - [[#description][Description]]
- - [[#features][Features]]
- - [[#install][Install]]
-   - [[#gnu-global-gtags][GNU Global (gtags)]]
-     - [[#install-on-osx-using-homebrew][Install on OSX using Homebrew]]
-     - [[#install-on-nix-from-source][Install on *nix from source]]
-       - [[#install-recommended-dependencies][Install recommended dependencies]]
-       - [[#install-with-recommended-features][Install with recommended features]]
-       - [[#configure-your-environment-to-use-pygments-and-ctags][Configure your environment to use pygments and ctags]]
-   - [[#emacs-configuration][Emacs Configuration]]
-     - [[#disabling-by-default][Disabling by default]]
- - [[#usage][Usage]]
-     - [[#language-support][Language Support]]
-       - [[#built-in-languages][Built-in languages]]
-       - [[#exuberant-ctags-languages][Exuberant ctags languages]]
-       - [[#universal-ctags-languages][Universal ctags languages]]
-       - [[#pygments-languages-plus-symbol-and-reference-tags][Pygments languages (plus symbol and reference tags)]]
-   - [[#eldoc-integration][Eldoc integration]]
- - [[#key-bindings][Key bindings]]
+- [[#description][Description]]
+  - [[#features][Features:]]
+- [[#install][Install]]
+  - [[#gnu-global-gtags][GNU Global (gtags)]]
+    - [[#install-on-osx-using-homebrew][Install on OSX using Homebrew]]
+    - [[#install-on-nix-from-source][Install on *nix from source]]
+      - [[#install-recommended-dependencies][Install recommended dependencies]]
+      - [[#install-with-recommended-features][Install with recommended features]]
+      - [[#configure-your-environment-to-use-pygments-and-ctags][Configure your environment to use pygments and ctags]]
+    - [[#conflict-between-ctags-and-emacss-etags-binary][Conflict between =ctags= and emacs's =etags= binary]]
+  - [[#emacs-configuration][Emacs Configuration]]
+    - [[#disabling-by-default][Disabling by default]]
+- [[#usage][Usage]]
+    - [[#language-support][Language Support]]
+      - [[#built-in-languages][Built-in languages]]
+      - [[#exuberant-ctags-languages][Exuberant ctags languages]]
+      - [[#universal-ctags-languages][Universal ctags languages]]
+      - [[#pygments-languages-plus-symbol-and-reference-tags][Pygments languages (plus symbol and reference tags)]]
+  - [[#eldoc-integration][Eldoc integration]]
+- [[#key-bindings][Key bindings]]
 
 * Description
 =helm-gtags= and =ggtags= are clients for GNU Global. GNU Global is a source
@@ -27,8 +28,7 @@ code tagging system that allows querying symbol locations in source code, such
 as definitions or references. Adding the =gtags= layer enables both of these
 modes.
 
-* Features
-
+** Features:
 - Select any tag in a project retrieved by gtags
 - Resume previous helm-gtags session
 - Jump to a location based on context
@@ -46,7 +46,6 @@ modes.
 - Enables =company complete= in modes that otherwise might not support it.
 
 * Install
-
 ** GNU Global (gtags)
 To use gtags, you first have to install [[https://www.gnu.org/software/global/download.html][GNU Global]].
 
@@ -60,7 +59,6 @@ recommend installing from source. If not for example to install on Ubuntu:
 #+end_src
 
 *** Install on OSX using Homebrew
-
 #+begin_src sh options
   brew install global --with-pygments --with-ctags
 #+end_src
@@ -107,6 +105,24 @@ with sh/ksh:
   echo export GTAGSLABEL=pygments >> .profile
 #+end_src
 
+*** Conflict between =ctags= and emacs's =etags= binary
+If you installed =emacs= from source after =ctags=, your original =ctags= binary
+is probably replaced by emacs's =etags=. To get around this you will need to
+configure =emacs= as following before installing:
+
+#+begin_src sh
+  ./configure --program-transform-name='s/^ctags$/ctags.emacs/'
+#+end_src
+
+To check if you have the correct version of =ctags= execute:
+
+#+begin_src sh
+  ctags --version | grep Exuberant
+#+end_src
+
+If yo do not get any output then it means you have the wrong =ctags= and must
+install it again.
+
 ** Emacs Configuration
 To use this configuration layer, add it to your =~/.spacemacs=. You
 will need to add =gtags= to the existing =dotspacemacs-configuration-layers=.
@@ -132,7 +148,6 @@ This variable can also be set as a file-local or directory-local variable for
 additional control per project.
 
 * Usage
-
 Before using the =gtags=, remember to create a GTAGS database by the following
 methods:
 
@@ -167,7 +182,7 @@ tags for the following languages:
 
 **** Exuberant ctags languages
 If you have enabled =exuberant ctags= and use that as the backend (i.e.,
-GTAGSLABEL=ctags or --gtagslabel=ctags) the following additional languages
+=GTAGSLABEL=ctags= or =--gtagslabel=ctags=) the following additional languages
 will have tags created for them:
 
 - c#
@@ -200,7 +215,7 @@ actually uses both ctags and pygments to find the definitions and uses of
 functions and variables as well as "other symbols".
 
 If you enabled pygments (the best choice) and use that as the backend (i.e.,
-GTAGSLABEL=pygments or --gtagslabel=pygments) the following additional
+=GTAGSLABEL=pygments= or =--gtagslabel=pygments=) the following additional
 languages will have tags created for them:
 
 - elixir
@@ -236,7 +251,7 @@ the gtags commands.
 
 | Key Binding | Description                                               |
 |-------------+-----------------------------------------------------------|
-| ~SPC m g c~ | create a tag database                                     |
+| ~SPC m g C~ | create a tag database                                     |
 | ~SPC m g f~ | jump to a file in tag database                            |
 | ~SPC m g g~ | jump to a location based on context                       |
 | ~SPC m g G~ | jump to a location based on context (open another window) |
@@ -249,4 +264,5 @@ the gtags commands.
 | ~SPC m g R~ | resume previous helm-gtags session                        |
 | ~SPC m g s~ | select any tag in a project retrieved by gtags            |
 | ~SPC m g S~ | show stack of visited locations                           |
+| ~SPC m g y~ | find symbols                                              |
 | ~SPC m g u~ | manually update tag database                              |

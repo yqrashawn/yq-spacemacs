@@ -22,7 +22,9 @@
   (spacemacs/declare-prefix-for-mode mode "mrd" "documentation")
   (spacemacs/set-leader-keys-for-major-mode mode
     "rdb" 'js-doc-insert-file-doc
-    "rdf" 'js-doc-insert-function-doc
+    "rdf" (if (configuration-layer/package-used-p 'yasnippet)
+              'js-doc-insert-function-doc-snippet
+            'js-doc-insert-function-doc)
     "rdt" 'js-doc-insert-tag
     "rdh" 'js-doc-describe-tag))
 
@@ -84,7 +86,7 @@
 (defun spacemacs//set-tern-key-bindings (mode)
   "Set the key bindings for tern and the given MODE."
   (add-to-list (intern (format "spacemacs-jump-handlers-%S" mode))
-               '(tern-find-definition :async t))
+            '(tern-find-definition :async t))
   (spacemacs/set-leader-keys-for-major-mode mode
     "rrV" 'tern-rename-variable
     "hd" 'tern-get-docs

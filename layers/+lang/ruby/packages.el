@@ -20,12 +20,14 @@
         ggtags
         helm-gtags
         minitest
+        org
         popwin
         rbenv
         robe
         rspec-mode
         rubocop
         (ruby-mode :location built-in :toggle (not ruby-enable-enh-ruby-mode))
+        ruby-refactor
         ruby-test-mode
         ruby-tools
         rvm
@@ -47,8 +49,10 @@
               "bo" 'bundle-open))))
 
 (defun ruby/post-init-company ()
-  (spacemacs|add-company-hook ruby-mode)
-  (spacemacs|add-company-hook enh-ruby-mode)
+  (when (configuration-layer/package-used-p 'robe)
+    (spacemacs|add-company-backends
+      :backends company-robe
+      :modes ruby-mode enh-ruby-mode))
   (with-eval-after-load 'company-dabbrev-code
     (dolist (mode '(ruby-mode enh-ruby-mode))
       (push mode company-dabbrev-code-modes))))
@@ -77,8 +81,8 @@
     (add-hook hook `turn-on-evil-matchit-mode)))
 
 (defun ruby/post-init-flycheck ()
-  (spacemacs/add-flycheck-hook 'ruby-mode)
-  (spacemacs/add-flycheck-hook 'enh-ruby-mode))
+  (spacemacs/enable-flycheck 'ruby-mode)
+  (spacemacs/enable-flycheck 'enh-ruby-mode))
 
 (defun ruby/post-init-ggtags ()
   (add-hook 'ruby-mode-local-vars-hook #'spacemacs/ggtags-mode-enable))
@@ -107,6 +111,10 @@
           "tr" 'minitest-rerun
           "ts" 'minitest-verify-single)))))
 
+(defun ruby/pre-init-org ()
+  (spacemacs|use-package-add-hook org
+    :post-config (add-to-list 'org-babel-load-languages '(ruby . t))))
+
 (defun ruby/post-init-popwin ()
   (push '("*rspec-compilation*" :dedicated t :position bottom :stick t :noselect t :height 0.4)
         popwin:special-display-config)
@@ -128,9 +136,6 @@
       (spacemacs/register-repl 'robe 'robe-start "robe")
       (dolist (hook '(ruby-mode-hook enh-ruby-mode-hook))
         (add-hook hook 'robe-mode))
-      (when (configuration-layer/package-usedp 'company)
-        (push 'company-robe company-backends-enh-ruby-mode)
-        (push 'company-robe company-backends-ruby-mode))
       (spacemacs/add-to-hooks 'robe-jump
                        '(spacemacs-jump-handlers-ruby-mode
                          spacemacs-jump-handlers-enh-ruby-mode)))
@@ -144,7 +149,7 @@
         (spacemacs/set-leader-keys-for-major-mode mode
           "'" 'robe-start
           ;; robe mode specific
-          "hd" 'robe-doc
+          "hh" 'robe-doc
           "rsr" 'robe-rails-refresh
           ;; inf-enh-ruby-mode
           "sf" 'ruby-send-definition
@@ -208,10 +213,28 @@
            ("Puppetfile" . ruby-mode))
     :init
     (progn
-      (spacemacs/declare-prefix-for-mode 'ruby-mode "mt" "ruby/test"))
+      (spacemacs/declare-prefix-for-mode 'ruby-mode "mt" "ruby/test")
+      (spacemacs/add-to-hooks
+       'spacemacs/ruby-maybe-highlight-debugger-keywords
+       '(ruby-mode-local-vars-hook enh-ruby-mode-local-vars-hook)))
     :config (spacemacs/set-leader-keys-for-major-mode 'ruby-mode
               "'" 'ruby-toggle-string-quotes
               "{" 'ruby-toggle-block)))
+
+(defun ruby/init-ruby-refactor ()
+  (use-package ruby-refactor
+    :defer t
+    :init (dolist (hook '(ruby-mode-hook enh-ruby-mode-hook))
+            (add-hook hook 'ruby-refactor-mode-launch))
+    :config
+    (progn
+      (dolist (mode '(ruby-mode enh-ruby-mode))
+        (spacemacs/declare-prefix-for-mode mode "mrR" "ruby/refactor")
+        (spacemacs/set-leader-keys-for-major-mode mode
+          "rRm" 'ruby-refactor-extract-to-method
+          "rRv" 'ruby-refactor-extract-local-variable
+          "rRc" 'ruby-refactor-extract-constant
+          "rRl" 'ruby-refactor-extract-to-let)))))
 
 (defun ruby/init-ruby-tools ()
   (use-package ruby-tools
