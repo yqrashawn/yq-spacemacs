@@ -12,8 +12,8 @@
 (setq spacemacs-visual-packages
       '(
         (ansi-colors :location built-in)
-        desktop
-        fill-column-indicator
+        ;; desktop
+        ;; fill-column-indicator
         hl-todo
         popup
         popwin
@@ -24,32 +24,32 @@
   (add-hook 'compilation-filter-hook
             'spacemacs-visual//compilation-buffer-apply-ansi-colors))
 
-(defun spacemacs-visual/init-desktop ()
-  (use-package desktop
-    :defer t
-    :init
-    (setq desktop-dirname spacemacs-cache-directory)
-    :config
-    (push spacemacs-cache-directory desktop-path)))
+;; (defun spacemacs-visual/init-desktop ()
+;;   (use-package desktop
+;;     :defer t
+;;     :init
+;;     (setq desktop-dirname spacemacs-cache-directory)
+;;     :config
+;;     (push spacemacs-cache-directory desktop-path)))
 
-(defun spacemacs-visual/init-fill-column-indicator ()
-  (use-package fill-column-indicator
-    :defer t
-    :init
-    (progn
-      (setq fci-rule-width 1)
-      (setq fci-rule-color "#D0BF8F")
-      ;; manually register the minor mode since it does not define any
-      ;; lighter
-      (push '(fci-mode "") minor-mode-alist)
-      (spacemacs|add-toggle fill-column-indicator
-        :status fci-mode
-        :on (turn-on-fci-mode)
-        :off (turn-off-fci-mode)
-        :documentation "Display the fill column indicator."
-        :evil-leader "tf"))
-    :config
-    (spacemacs|diminish fci-mode " ⓕ" " f")))
+;; (defun spacemacs-visual/init-fill-column-indicator ()
+;;   (use-package fill-column-indicator
+;;     :defer t
+;;     :init
+;;     (progn
+;;       (setq fci-rule-width 1)
+;;       (setq fci-rule-color "#D0BF8F")
+;;       ;; manually register the minor mode since it does not define any
+;;       ;; lighter
+;;       (push '(fci-mode "") minor-mode-alist)
+;;       (spacemacs|add-toggle fill-column-indicator
+;;         :status fci-mode
+;;         :on (turn-on-fci-mode)
+;;         :off (turn-off-fci-mode)
+;;         :documentation "Display the fill column indicator."
+;;         :evil-leader "tf"))
+;;     :config
+;;     (spacemacs|diminish fci-mode " ⓕ" " f")))
 
 (defun spacemacs-visual/init-hl-todo ()
   (use-package hl-todo
