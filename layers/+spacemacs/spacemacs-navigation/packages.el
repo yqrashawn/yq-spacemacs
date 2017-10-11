@@ -11,13 +11,13 @@
 
 (setq spacemacs-navigation-packages
       '(
-        ace-link
+        ;; ace-link
         ;; auto-highlight-symbol
         (centered-cursor :location local)
         (doc-view :location built-in)
         flx-ido
         ;; golden-ratio
-        info+
+        ;; info+
         open-junk-file
         ;; paradox
         restart-emacs
@@ -26,19 +26,19 @@
         ))
 
 
-(defun spacemacs-navigation/init-ace-link ()
-  (use-package ace-link
-    :commands spacemacs/ace-buffer-links
-    :init
-    (progn
-      (define-key spacemacs-buffer-mode-map "o" 'spacemacs/ace-buffer-links)
-      (with-eval-after-load 'info
-        (define-key Info-mode-map "o" 'ace-link-info))
-      (with-eval-after-load 'help-mode
-        (define-key help-mode-map "o" 'ace-link-help))
-      (with-eval-after-load 'eww
-        (define-key eww-link-keymap "o" 'ace-link-eww)
-        (define-key eww-mode-map "o" 'ace-link-eww)))))
+;; (defun spacemacs-navigation/init-ace-link ()
+;;   (use-package ace-link
+;;     :commands spacemacs/ace-buffer-links
+;;     :init
+;;     (progn
+;;       (define-key spacemacs-buffer-mode-map "o" 'spacemacs/ace-buffer-links)
+;;       (with-eval-after-load 'info
+;;         (define-key Info-mode-map "o" 'ace-link-info))
+;;       (with-eval-after-load 'help-mode
+;;         (define-key help-mode-map "o" 'ace-link-help))
+;;       (with-eval-after-load 'eww
+;;         (define-key eww-link-keymap "o" 'ace-link-eww)
+;;         (define-key eww-mode-map "o" 'ace-link-eww)))))
 
 ;; (defun spacemacs-navigation/init-auto-highlight-symbol ()
 ;;   (use-package auto-highlight-symbol
@@ -282,14 +282,14 @@
 
 ;;       (spacemacs|diminish golden-ratio-mode " ⓖ" " g"))))
 
-(defun spacemacs-navigation/init-info+ ()
-  (use-package info+
-    :defer t
-    :init
-    (progn
-      (with-eval-after-load 'info
-        (require 'info+))
-      (setq Info-fontify-angle-bracketed-flag nil))))
+;; (defun spacemacs-navigation/init-info+ ()
+;;   (use-package info+
+;;     :defer t
+;;     :init
+;;     (progn
+;;       (with-eval-after-load 'info
+;;         (require 'info+))
+;;       (setq Info-fontify-angle-bracketed-flag nil))))
 
 (defun spacemacs-navigation/init-open-junk-file ()
   (use-package open-junk-file

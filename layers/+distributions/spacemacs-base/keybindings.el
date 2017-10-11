@@ -127,10 +127,10 @@
   "bd"    'spacemacs/kill-this-buffer
   "be"    'spacemacs/safe-erase-buffer
   "bh"    'spacemacs/home
-  "b C-d" 'spacemacs/kill-other-buffers
+  "b C-d" 'spacemacs/switch-to-messages-buffer
   "b C-S-d" 'spacemacs/kill-matching-buffers-rudely
   "bn"    'next-buffer
-  "bm"    'spacemacs/switch-to-messages-buffer
+  "bm"    'spacemacs/kill-other-buffers
   "b N h" 'spacemacs/new-empty-buffer-left
   "b N j" 'spacemacs/new-empty-buffer-below
   "b N k" 'spacemacs/new-empty-buffer-above
