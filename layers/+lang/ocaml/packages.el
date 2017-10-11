@@ -25,14 +25,18 @@
     ))
 
 (defun ocaml/post-init-company ()
-  (spacemacs|add-company-hook merlin-mode))
+  (when (configuration-layer/package-used-p 'merlin)
+    (spacemacs|add-company-backends
+      :backends merlin-company-backend
+      :modes merlin-mode
+      :variables merlin-completion-with-doc t)))
 
-(when (configuration-layer/layer-usedp 'syntax-checking)
+(when (configuration-layer/layer-used-p 'syntax-checking)
   (defun ocaml/post-init-flycheck ()
-    (spacemacs/add-flycheck-hook 'merlin-mode))
+    (spacemacs/enable-flycheck 'merlin-mode))
   (defun ocaml/init-flycheck-ocaml ()
     (use-package flycheck-ocaml
-      :if (configuration-layer/package-usedp 'flycheck)
+      :if (configuration-layer/package-used-p 'flycheck)
       :defer t
       :init
       (progn
@@ -54,8 +58,6 @@
       (add-to-list 'spacemacs-jump-handlers-tuareg-mode
                 'spacemacs/merlin-locate)
       (add-hook 'tuareg-mode-hook 'merlin-mode)
-      (setq merlin-completion-with-doc t)
-      (push 'merlin-company-backend company-backends-merlin-mode)
       (spacemacs/set-leader-keys-for-major-mode 'tuareg-mode
         "cp" 'merlin-project-check
         "cv" 'merlin-goto-project-file

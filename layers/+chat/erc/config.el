@@ -21,4 +21,5 @@
 (defvar erc-server-list nil
   "If non nil, connect automatically to the specified servers with the given credentials.")
 
-(spacemacs|defvar-company-backends erc-mode)
+(defvar erc-enable-notifications t
+  "If non nil, enable ERC notifications.")

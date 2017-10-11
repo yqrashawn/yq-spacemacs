@@ -3,19 +3,28 @@
 [[file:img/emacs.png]]
 
 * Table of Contents                                         :TOC_4_gh:noexport:
- - [[#description][Description]]
- - [[#install][Install]]
- - [[#auto-compile][Auto-compile]]
- - [[#working-with-lisp-files-barfage-slurpage--more][Working with lisp files (barfage, slurpage & more)]]
- - [[#debugging-elisp][Debugging Elisp]]
- - [[#key-bindings][Key bindings]]
-   - [[#additional-evaluation-functions][Additional evaluation functions]]
-   - [[#format-code][Format code]]
-   - [[#debugging][Debugging]]
+- [[#description][Description]]
+  - [[#features][Features:]]
+- [[#install][Install]]
+- [[#auto-compile][Auto-compile]]
+- [[#working-with-lisp-files-barfage-slurpage--more][Working with lisp files (barfage, slurpage & more)]]
+- [[#debugging-elisp][Debugging Elisp]]
+- [[#key-bindings][Key bindings]]
+  - [[#additional-evaluation-functions][Additional evaluation functions]]
+  - [[#format-code][Format code]]
+  - [[#debugging][Debugging]]
 
 * Description
 This layer gathers all the configuration related to emacs-lisp. This should
 always be in your dotfile, it is not recommended to uninstall it.
+
+** Features:
+- Auto-completion using company
+- Linting using flycheck integration
+- Repl support via =IELM=
+- Support for specific lisp navigation styles via =emacs-lisp-mode=
+- Auto-compile via [[https://github.com/tarsius/auto-compile][auto-compile]] package
+- Debuggin via [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Edebug.html#Edebug][edebug]]
 
 * Install
 To use this configuration layer, add it to your =~/.spacemacs=. You will need to
@@ -37,7 +46,7 @@ feature use this line in your =dotspacemacs/user-config= function.
 You can also exclude the =auto-compile= package.
 
 * Working with lisp files (barfage, slurpage & more)
-Spacemacs comes with a special ~lisp-state~ for working with lisp code that
+Spacemacs comes with a special =lisp-state= for working with lisp code that
 supports slurpage, barfage and more tools you'll likely want when working with
 lisp.
 
@@ -86,22 +95,23 @@ function or press ~o~ to go out of it.
 
 * Key bindings
 
-| Key Binding                | Description                            |
-|----------------------------+----------------------------------------|
-| ~SPC m g g~                | go to definition of symbol under point |
-| ~SPC m h h~                | describe symbol at point               |
-| ~SPC m c c~                | byte compile the current file          |
-| ~SPC m c l~                | popup compile-log buffer               |
-| ~SPC m e $~ or ~SPC m e l~ | go to end of current line and evaluate |
-| ~SPC m e b~                | evaluate current buffer                |
-| ~SPC m e C~                | evaluate current =defun= or =setq=     |
-| ~SPC m e e~                | evaluate sexp before point             |
-| ~SPC m e f~                | evaluation current function            |
-| ~SPC m e r~                | evaluate current region                |
-| ~SPC m ​,​~                  | toggle =lisp state=                    |
-| ~SPC m t b~                | run tests of current buffer            |
-| ~SPC m t q~                | run =ert=                              |
-| ~SPC m d m~                | open [[https://github.com/joddie/macrostep][macrostep]] transient-state         |
+| Key Binding                | Description                                            |
+|----------------------------+--------------------------------------------------------|
+| ~SPC m g g~                | go to definition of symbol under point                 |
+| ~SPC m g G~                | go to definition of symbol under point in other window |
+| ~SPC m h h~                | describe symbol at point                               |
+| ~SPC m c c~                | byte compile the current file                          |
+| ~SPC m c l~                | popup compile-log buffer                               |
+| ~SPC m e $~ or ~SPC m e l~ | go to end of current line and evaluate                 |
+| ~SPC m e b~                | evaluate current buffer                                |
+| ~SPC m e C~                | evaluate current =defun= or =setq=                     |
+| ~SPC m e e~                | evaluate sexp before point                             |
+| ~SPC m e f~                | evaluation current function                            |
+| ~SPC m e r~                | evaluate current region                                |
+| ~SPC m ​,​~                  | toggle =lisp state=                                    |
+| ~SPC m t b~                | run tests of current buffer                            |
+| ~SPC m t q~                | run =ert=                                              |
+| ~SPC m d m~                | open [[https://github.com/joddie/macrostep][macrostep]] transient-state                         |
 
 ** Additional evaluation functions
 If =smartparens= is used the following additional key bindings are available:
@@ -112,7 +122,7 @@ If =smartparens= is used the following additional key bindings are available:
 | ~SPC m e s~ | evaluate symbol around point |
 
 ** Format code
-The [[file:../../semantic/README.org][semantic]] layer should be installed for these key bindings to become active.
+The [[https://github.com/syl20bnr/spacemacs/blob/develop/layers/%2Bemacs/semantic/README.org][semantic]] layer should be installed for these key bindings to become active.
 
 | Key Binding | Description             |
 |-------------+-------------------------|

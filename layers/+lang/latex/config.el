@@ -11,8 +11,6 @@
 
 ;; variables
 
-(spacemacs|defvar-company-backends LaTeX-mode)
-
 (spacemacs|define-jump-handlers latex-mode)
 
 (defvar latex-build-command (if (executable-find "latexmk") "LatexMk" "LaTeX")
@@ -23,6 +21,9 @@
 
 (defvar latex-enable-folding nil
   "Whether to use `TeX-fold-mode' or not in tex/latex buffers.")
+
+(defvar latex-enable-magic nil
+  "Whether to enable \"magic\" symbols in the buffer.")
 
 (defvar latex-nofill-env '("equation"
                            "equation*"

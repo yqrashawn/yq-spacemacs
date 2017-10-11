@@ -24,6 +24,7 @@
         helm-gtags
         (ielm :location built-in)
         macrostep
+        parinfer
         semantic
         smartparens
         srefactor))
@@ -48,8 +49,55 @@
           (lisp-indent-line))))))
 
 (defun emacs-lisp/post-init-company ()
-  (spacemacs|add-company-hook ielm-mode)
-  (push '(company-files company-capf) company-backends-ielm-mode))
+  (spacemacs|add-company-backends :backends company-capf
+                                  :modes emacs-lisp-mode)
+  (spacemacs|add-company-backends :backends (company-files company-capf)
+                                  :modes ielm-mode))
+
+(defun emacs-lisp/init-debug ()
+  (use-package debug
+    :defer t
+    :init (dolist (mode '(emacs-lisp-mode lisp-interaction-mode))
+            (spacemacs/declare-prefix-for-mode mode "md" "debug")
+            (spacemacs/set-leader-keys-for-major-mode mode
+              "dt" 'spacemacs/elisp-toggle-debug-expr-and-eval-func))
+    :config (evilified-state-evilify-map debugger-mode-map
+              :mode debugger-mode)))
+
+(defun emacs-lisp/init-edebug ()
+  (use-package edebug
+    :defer t
+    :init
+    (progn
+      ;; key bindings
+      (dolist (mode '(emacs-lisp-mode lisp-interaction-mode))
+        (spacemacs/set-leader-keys-for-major-mode mode
+          "df" 'spacemacs/edebug-instrument-defun-on
+          "dF" 'spacemacs/edebug-instrument-defun-off))
+      ;; since we evilify `edebug-mode-map' we don't need to intercept it to
+      ;; make it work with evil
+     (evil-set-custom-state-maps
+      'evil-intercept-maps
+      'evil-pending-intercept-maps
+      'intercept-state
+      'evil-make-intercept-map
+      (delq (assq 'edebug-mode-map evil-intercept-maps)
+            evil-intercept-maps))
+      (evilified-state-evilify-map edebug-mode-map
+        :eval-after-load edebug
+        :bindings
+        "a" 'edebug-stop
+        "c" 'edebug-go-mode
+        "s" 'edebug-step-mode
+        "S" 'edebug-next-mode)
+      (evilified-state-evilify-map edebug-eval-mode-map
+        :eval-after-load edebug
+        :bindings
+        "a" 'edebug-stop
+        "c" 'edebug-go-mode
+        "s" 'edebug-step-mode
+        "S" 'edebug-next-mode)
+      (advice-add 'edebug-mode :after 'spacemacs//edebug-mode))))
 
 (defun emacs-lisp/init-debug ()
   (use-package debug
@@ -148,10 +196,7 @@
       "gG" 'spacemacs/nav-find-elisp-thing-at-point-other-window
       ","  'lisp-state-toggle-lisp-state
       "tb" 'spacemacs/ert-run-tests-buffer
-      "tq" 'ert))
-  ;; company support
-  (push 'company-capf company-backends-emacs-lisp-mode)
-  (spacemacs|add-company-hook emacs-lisp-mode))
+      "tq" 'ert)))
 
 (defun emacs-lisp/init-macrostep ()
   (use-package macrostep
@@ -181,7 +226,7 @@
 (defun emacs-lisp/post-init-flycheck ()
   ;; Don't activate flycheck by default in elisp
   ;; because of too much false warnings
-  ;; (spacemacs/add-flycheck-hook 'emacs-lisp-mode)
+  ;; (spacemacs/enable-flycheck 'emacs-lisp-mode)
 
   ;; Make flycheck recognize packages in loadpath
   ;; i.e (require 'company) will not give an error now
@@ -192,6 +237,9 @@
 
 (defun emacs-lisp/post-init-ggtags ()
   (add-hook 'emacs-lisp-mode-local-vars-hook #'spacemacs/ggtags-mode-enable))
+
+(defun emacs-lisp/post-init-parinfer ()
+  (add-hook 'emacs-lisp-mode-hook 'parinfer-mode))
 
 (defun emacs-lisp/post-init-semantic ()
   (add-hook 'emacs-lisp-mode-hook 'semantic-mode)

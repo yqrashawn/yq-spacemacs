@@ -16,8 +16,8 @@
 (require 'core-debug)
 (require 'core-command-line)
 (require 'core-dotspacemacs)
+(require 'core-custom-settings)
 (require 'core-release-management)
-(require 'core-auto-completion)
 (require 'core-jump)
 (require 'core-display-init)
 (require 'core-themes-support)
@@ -86,29 +86,33 @@ the final step of executing code in `emacs-startup-hook'.")
       (toggle-frame-maximized))
     (add-to-list 'default-frame-alist '(fullscreen . maximized)))
   (dotspacemacs|call-func dotspacemacs/user-init "Calling dotfile user init...")
+  ;; Given the loading process of Spacemacs we have no choice but to set the
+  ;; custom settings twice:
+  ;; - once at the very beginning of startup (here)
+  ;; - once at the very end of loading (in `spacemacs/setup-startup-hook')
+  ;; The first application of custom settings is to be sure that Emacs knows all
+  ;; the defined settings before saving them to a file (otherwise we loose all
+  ;; the settings that Emacs does not know of).
+  ;; The second application is to override any setting set in dotfile functions
+  ;; like `dotspacemacs/user-config`, users expect the custom settings to be the
+  ;; effective ones.
+  ;; Note: Loading custom-settings twice is not ideal since they can have side
+  ;; effects! Maybe an inhibit variable in Emacs can supress these side effects?
+  (spacemacs/initialize-custom-file)
+  (dotspacemacs|call-func dotspacemacs/emacs-custom-settings
+                          "Calling dotfile Emacs custom settings...")
   (setq dotspacemacs-editing-style (dotspacemacs//read-editing-style-config
                                     dotspacemacs-editing-style))
   (configuration-layer/initialize)
-  ;; Apply theme
-  (let ((default-theme (car dotspacemacs-themes)))
-    (condition-case err
-        (spacemacs/load-theme default-theme nil)
-      ('error
-       ;; fallback on Spacemacs default theme
-       (setq spacemacs--default-user-theme default-theme)
-       (setq dotspacemacs-themes (delq spacemacs--fallback-theme
-                                       dotspacemacs-themes))
-       (add-to-list 'dotspacemacs-themes spacemacs--fallback-theme)
-       (setq default-theme spacemacs--fallback-theme)
-       (load-theme spacemacs--fallback-theme t)))
-    ;; protect used themes from deletion as orphans
-    (setq configuration-layer--protected-packages
-          (append
-           (delq nil (mapcar 'spacemacs//get-theme-package
-                             dotspacemacs-themes))
-           configuration-layer--protected-packages))
-    (setq-default spacemacs--cur-theme default-theme)
-    (setq-default spacemacs--cycle-themes (cdr dotspacemacs-themes)))
+  ;; frame title init
+  (when (and (display-graphic-p) dotspacemacs-frame-title-format)
+    (require 'format-spec)
+    (setq frame-title-format '((:eval (spacemacs/title-prepare dotspacemacs-frame-title-format))))
+    (if dotspacemacs-icon-title-format
+        (setq icon-title-format '((:eval (spacemacs/title-prepare dotspacemacs-icon-title-format))))
+      (setq icon-title-format frame-title-format)))
+  ;; theme
+  (spacemacs/load-default-theme spacemacs--fallback-theme 'disable)
   ;; font
   (spacemacs|do-after-display-system-init
    ;; If you are thinking to remove this call to `message', think twice. You'll
@@ -149,21 +153,18 @@ the final step of executing code in `emacs-startup-hook'.")
   (if dotspacemacs-mode-line-unicode-symbols
       (setq-default spacemacs-version-check-lighter "[⇪]"))
   ;; install the dotfile if required
-  (dotspacemacs/maybe-install-dotfile)
-  ;; install user default theme if required
-  (when spacemacs--default-user-theme
-    (spacemacs/load-theme spacemacs--default-user-theme 'install)))
+  (dotspacemacs/maybe-install-dotfile))
 
 (defun spacemacs//removes-gui-elements ()
   "Remove the menu bar, tool bar and scroll bars."
   ;; removes the GUI elements
+  (when (and (fboundp 'scroll-bar-mode) (not (eq scroll-bar-mode -1)))
+    (scroll-bar-mode -1))
   (when (and (fboundp 'tool-bar-mode) (not (eq tool-bar-mode -1)))
     (tool-bar-mode -1))
   (unless (spacemacs/window-system-is-mac)
     (when (and (fboundp 'menu-bar-mode) (not (eq menu-bar-mode -1)))
       (menu-bar-mode -1)))
-  (when (and (fboundp 'scroll-bar-mode) (not (eq scroll-bar-mode -1)))
-    (scroll-bar-mode -1))
   ;; tooltips in echo-aera
   (when (and (fboundp 'tooltip-mode) (not (eq tooltip-mode -1)))
     (tooltip-mode -1)))
@@ -209,11 +210,16 @@ defer call using `spacemacs-post-user-config-hook'."
      ;; them in his/her ~/.spacemacs file
      (dotspacemacs|call-func dotspacemacs/user-config
                              "Calling dotfile user config...")
+     (dotspacemacs|call-func dotspacemacs/emacs-custom-settings
+                             "Calling dotfile Emacs custom settings...")
      (run-hooks 'spacemacs-post-user-config-hook)
      (setq spacemacs-post-user-config-hook-run t)
      (when (fboundp dotspacemacs-scratch-mode)
        (with-current-buffer "*scratch*"
          (funcall dotspacemacs-scratch-mode)))
+     (when spacemacs--delayed-user-theme
+       (spacemacs/load-theme spacemacs--delayed-user-theme
+                             spacemacs--fallback-theme t))
      (configuration-layer/display-summary emacs-start-time)
      (spacemacs-buffer//startup-hook)
      (spacemacs/check-for-new-version nil spacemacs-version-check-interval)

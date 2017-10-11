@@ -11,8 +11,6 @@
 
 ;; variables
 
-(spacemacs|defvar-company-backends go-mode)
-
 (spacemacs|define-jump-handlers go-mode godef-jump)
 
 (defvar go-use-gocheck-for-testing nil
@@ -23,3 +21,9 @@
 
 (defvar go-use-gometalinter nil
   "Use gometalinter if the variable has non-nil value.")
+
+(defvar go-test-buffer-name "*go test*"
+  "Name of the buffer for go test output. Default is *go test*.")
+
+(defvar go-use-test-args ""
+  "Additional arguments to be supplied to `go test` during runtime.")

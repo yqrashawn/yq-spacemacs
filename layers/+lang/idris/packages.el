@@ -2,23 +2,25 @@
 ;;
 ;; Copyright (c) 2012-2017 Sylvain Benner & Contributors
 ;;
-;; Author: Timothy Jones <git@zmthy.io>
+;; Author: Timothy Jones <tim@zmthy.net>
 ;; URL: https://github.com/syl20bnr/spacemacs
 ;;
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; License: GPLv3
 
-(setq idris-packages '(company
-                       idris-mode
-                       golden-ratio
-                       popwin))
+(setq idris-packages
+      '(
+        company
+        idris-mode
+        golden-ratio
+        popwin
+        ))
 
 (defun idris/post-init-company ()
-  (spacemacs|add-company-hook idris-mode)
-  (spacemacs|add-company-hook idris-repl-mode)
-  (push 'company-capf company-backends-idris-mode)
-  (push 'company-capf company-backends-idris-repl-mode))
+  (spacemacs|add-company-backends
+    :backends company-capf
+    :modes idris-mode idris-repl-mode))
 
 (defun idris/init-idris-mode ()
   (use-package idris-mode

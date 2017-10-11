@@ -86,6 +86,7 @@ the user activate the completion manually."
 
 (defun spacemacs//eshell-switch-company-frontend ()
   "Sets the company frontend to `company-preview-frontend' in e-shell mode."
+  (require 'company)
   (setq-local company-frontends '(company-preview-frontend)))
 
 (defun spacemacs//eshell-auto-end ()
@@ -122,18 +123,23 @@ is achieved by adding the relevant text properties."
               'spacemacs//eshell-auto-end nil t)
     (add-hook 'evil-hybrid-state-entry-hook
               'spacemacs//eshell-auto-end nil t))
-  (when (configuration-layer/package-usedp 'semantic)
+  (when (configuration-layer/package-used-p 'semantic)
     (semantic-mode -1))
+  ;; This is an eshell alias
+  (defun eshell/clear ()
+    (let ((inhibit-read-only t))
+      (erase-buffer)))
+  ;; This is a key-command
+  (defun spacemacs/eshell-clear-keystroke ()
+    "Allow for keystrokes to invoke eshell/clear"
+    (interactive)
+    (eshell/clear)
+    (eshell-send-input))
   ;; Caution! this will erase buffer's content at C-l
-  (define-key eshell-mode-map (kbd "C-l") 'eshell/clear)
+  (define-key eshell-mode-map (kbd "C-l") 'spacemacs/eshell-clear-keystroke)
   (define-key eshell-mode-map (kbd "C-d") 'eshell-delchar-or-maybe-eof))
 
-;; This is an eshell alias
-(defun eshell/clear ()
-  (interactive)
-  (let ((inhibit-read-only t))
-    (erase-buffer))
-  (eshell-send-input))
+
 
 (defun spacemacs/helm-eshell-history ()
   "Correctly revert to insert state after selection."

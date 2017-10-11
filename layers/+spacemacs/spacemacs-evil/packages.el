@@ -17,6 +17,7 @@
         evil-exchange
         evil-iedit-state
         evil-indent-plus
+        ;; evil-lion
         evil-lisp-state
         ;; for testing purpose, contribute by reporting bugs and sending PRs
         ;; to https://github.com/gabesoft/evil-mc
@@ -29,7 +30,7 @@
         evil-surround
         ;; Temporarily disabled, pending the resolution of
         ;; https://github.com/7696122/evil-terminal-cursor-changer/issues/8
-        ;; evil-terminal-cursor-changer
+        evil-terminal-cursor-changer
         ;; evil-tutor
         (evil-unimpaired :location (recipe :fetcher local))
         ;; evil-visual-mark-mode
@@ -48,7 +49,7 @@
       (setq anzu-search-threshold 1000
             anzu-cons-mode-line-p nil)
       ;; powerline integration
-      (when (configuration-layer/package-usedp 'spaceline)
+      (when (configuration-layer/package-used-p 'spaceline)
         (defun spacemacs/anzu-update-mode-line (here total)
           "Custom update function which does not propertize the status."
           (when anzu--state
@@ -99,6 +100,18 @@
   (use-package evil-indent-plus
     :init (evil-indent-plus-default-bindings)))
 
+;; (defun spacemacs-evil/init-evil-lion ()
+;;   (use-package evil-lion
+;;     :init
+;;     (progn
+;;       ;; Override the default keys, as they collide
+;;       (setq evil-lion-left-align-key nil
+;;             evil-lion-right-align-key nil)
+;;       (spacemacs/set-leader-keys
+;;         "xal" 'evil-lion-left
+;;         "xaL" 'evil-lion-right)
+;;       (evil-lion-mode))))
+
 (defun spacemacs-evil/init-evil-lisp-state ()
   (use-package evil-lisp-state
     :init (setq evil-lisp-state-global t)
@@ -108,12 +121,11 @@
   (use-package evil-mc
     :defer t
     :init
-    ;; remove emc prefix when there is not multiple cursors
-    (setq evil-mc-mode-line
-          `(:eval (when (> (evil-mc-get-cursor-count) 1)
-                    (format ,(propertize " %s:%d" 'face 'cursor)
-                            evil-mc-mode-line-prefix
-                            (evil-mc-get-cursor-count)))))))
+    (progn
+      ;; evil-mc is not compatible with the paste transient state
+      (define-key evil-normal-state-map "p" 'spacemacs/evil-mc-paste-after)
+      (define-key evil-normal-state-map "P" 'spacemacs/evil-mc-paste-before)
+      (setq evil-mc-one-cursor-show-mode-line-text nil))))
 
 ;; other commenting functions in funcs.el with keybinds in keybindings.el
 (defun spacemacs-evil/init-evil-nerd-commenter ()

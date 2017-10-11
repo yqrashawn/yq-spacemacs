@@ -9,6 +9,8 @@
 ;;
 ;;; License: GPLv3
 
+;; variables
+
 (defvar restclient-use-org nil
   "If non-nil use `ob-http' instead of `restclient'.")
 

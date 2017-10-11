@@ -25,10 +25,10 @@
             "j" 'cfengine3-reformat-json-string)))
 
 (defun cfengine/post-init-company ()
-  (spacemacs|add-company-hook cfengine3-mode))
+  (spacemacs|add-company-backends :modes cfengine3-mode))
 
 (defun cfengine/post-init-eldoc ()
   (add-hook 'cfengine3-mode-hook 'eldoc-mode))
 
 (defun cfengine/post-init-flycheck ()
-  (spacemacs/add-flycheck-hook 'cfengine3-mode-hook))
+  (spacemacs/enable-flycheck 'cfengine3-mode-hook))
