@@ -18,14 +18,14 @@
         emmet-mode
         evil-matchit
         flycheck
-        haml-mode
+        ;; haml-mode
         (helm-css-scss :requires helm)
-        impatient-mode
-        less-css-mode
-        pug-mode
-        sass-mode
-        scss-mode
-        slim-mode
+        ;; impatient-mode
+        ;; less-css-mode
+        ;; pug-mode
+        ;; sass-mode
+        ;; scss-mode
+        ;; slim-mode
         smartparens
         tagedit
         web-mode
@@ -57,12 +57,13 @@
         :variables
         ;; see https://github.com/osv/company-web/issues/4
         company-minimum-prefix-length 0)
-      (spacemacs|add-company-backends
-        :backends company-web-jade
-        :modes pug-mode)
-      (spacemacs|add-company-backends
-        :backends company-web-slim
-        :modes slim-mode))))
+      ;; (spacemacs|add-company-backends
+      ;;   :backends company-web-jade
+      ;;   :modes pug-mode)
+      ;; (spacemacs|add-company-backends
+      ;;   :backends company-web-slim
+      ;;   :modes slim-mode)
+      )))
 
 (defun html/init-css-mode ()
   (use-package css-mode
@@ -126,57 +127,58 @@
   (add-hook 'web-mode-hook 'turn-on-evil-matchit-mode))
 
 (defun html/post-init-flycheck ()
-  (dolist (mode '(haml-mode
-                  less-mode
-                  pug-mode
-                  sass-mode
-                  scss-mode
-                  slim-mode
+  (dolist (mode '(
+                  ;; haml-mode
+                  ;; less-mode
+                  ;; pug-mode
+                  ;; sass-mode
+                  ;; scss-mode
+                  ;; slim-mode
                   web-mode))
     (spacemacs/enable-flycheck mode)))
 
-(defun html/init-haml-mode ()
-  (use-package haml-mode
-    :defer t))
+;; (defun html/init-haml-mode ()
+;;   (use-package haml-mode
+;;     :defer t))
 
-(defun html/init-helm-css-scss ()
-  (use-package helm-css-scss
-    :defer t
-    :init
-    (dolist (mode '(css-mode scss-mode))
-      (spacemacs/set-leader-keys-for-major-mode mode "gh" 'helm-css-scss))))
+;; (defun html/init-helm-css-scss ()
+;;   (use-package helm-css-scss
+;;     :defer t
+;;     :init
+;;     (dolist (mode '(css-mode scss-mode))
+;;       (spacemacs/set-leader-keys-for-major-mode mode "gh" 'helm-css-scss))))
 
-(defun html/init-impatient-mode ()
-  (use-package impatient-mode
-    :defer t
-    :init
-    (progn
-      (dolist (mode '(web-mode css-mode))
-        (spacemacs/set-leader-keys-for-major-mode 'web-mode "i" 'spacemacs/impatient-mode)))))
+;; (defun html/init-impatient-mode ()
+;;   (use-package impatient-mode
+;;     :defer t
+;;     :init
+;;     (progn
+;;       (dolist (mode '(web-mode css-mode))
+;;         (spacemacs/set-leader-keys-for-major-mode 'web-mode "i" 'spacemacs/impatient-mode)))))
 
-(defun html/init-less-css-mode ()
-  (use-package less-css-mode
-    :defer t
-    :mode ("\\.less\\'" . less-css-mode)))
+;; (defun html/init-less-css-mode ()
+;;   (use-package less-css-mode
+;;     :defer t
+;;     :mode ("\\.less\\'" . less-css-mode)))
 
-(defun html/init-pug-mode ()
-  (use-package pug-mode
-    :defer t
-    :mode ("\\.pug$" . pug-mode)))
+;; (defun html/init-pug-mode ()
+;;   (use-package pug-mode
+;;     :defer t
+;;     :mode ("\\.pug$" . pug-mode)))
 
-(defun html/init-sass-mode ()
-  (use-package sass-mode
-    :defer t
-    :mode ("\\.sass\\'" . sass-mode)))
+;; (defun html/init-sass-mode ()
+;;   (use-package sass-mode
+;;     :defer t
+;;     :mode ("\\.sass\\'" . sass-mode)))
 
-(defun html/init-scss-mode ()
-  (use-package scss-mode
-    :defer t
-    :mode ("\\.scss\\'" . scss-mode)))
+;; (defun html/init-scss-mode ()
+;;   (use-package scss-mode
+;;     :defer t
+;;     :mode ("\\.scss\\'" . scss-mode)))
 
-(defun html/init-slim-mode ()
-  (use-package slim-mode
-    :defer t))
+;; (defun html/init-slim-mode ()
+;;   (use-package slim-mode
+;;     :defer t))
 
 (defun html/post-init-smartparens ()
   (spacemacs/add-to-hooks

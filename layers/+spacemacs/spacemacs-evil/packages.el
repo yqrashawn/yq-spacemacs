@@ -17,7 +17,7 @@
         evil-exchange
         evil-iedit-state
         evil-indent-plus
-        evil-lion
+        ;; evil-lion
         evil-lisp-state
         ;; for testing purpose, contribute by reporting bugs and sending PRs
         ;; to https://github.com/gabesoft/evil-mc
@@ -100,17 +100,17 @@
   (use-package evil-indent-plus
     :init (evil-indent-plus-default-bindings)))
 
-(defun spacemacs-evil/init-evil-lion ()
-  (use-package evil-lion
-    :init
-    (progn
-      ;; Override the default keys, as they collide
-      (setq evil-lion-left-align-key nil
-            evil-lion-right-align-key nil)
-      (spacemacs/set-leader-keys
-        "xal" 'evil-lion-left
-        "xaL" 'evil-lion-right)
-      (evil-lion-mode))))
+;; (defun spacemacs-evil/init-evil-lion ()
+;;   (use-package evil-lion
+;;     :init
+;;     (progn
+;;       ;; Override the default keys, as they collide
+;;       (setq evil-lion-left-align-key nil
+;;             evil-lion-right-align-key nil)
+;;       (spacemacs/set-leader-keys
+;;         "xal" 'evil-lion-left
+;;         "xaL" 'evil-lion-right)
+;;       (evil-lion-mode))))
 
 (defun spacemacs-evil/init-evil-lisp-state ()
   (use-package evil-lisp-state

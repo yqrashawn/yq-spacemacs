@@ -55,3 +55,6 @@ private/
 /games/
 /doc/COMMUNITY.org
 /doc/CONTRIBUTING.org
+layouts
+saveplace
+SessionDesktop.el
