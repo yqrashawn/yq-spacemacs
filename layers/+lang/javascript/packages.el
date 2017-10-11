@@ -12,7 +12,7 @@
 (setq javascript-packages
       '(
         add-node-modules-path
-        coffee-mode
+        ;; coffee-mode
         company
         (company-tern :requires company)
         evil-matchit
@@ -37,12 +37,12 @@
 (defun javascript/init-vue-mode ()
   (use-package vue-mode))
 
-(defun javascript/post-init-company ()
-  (spacemacs|add-company-hook js2-mode))
+;; (defun javascript/post-init-company ()
+  ;; (spacemacs|add-company-hook js2-mode))
 
 (defun javascript/post-init-add-node-modules-path ()
   (add-hook 'css-mode-hook #'add-node-modules-path)
-  (add-hook 'coffee-mode-hook #'add-node-modules-path)
+  ;; (add-hook 'coffee-mode-hook #'add-node-modules-path)
   (add-hook 'js2-mode-hook #'add-node-modules-path)
   (add-hook 'json-mode-hook #'add-node-modules-path))
 
@@ -55,13 +55,13 @@
             :backends company-tern
             :modes js2-mode)))
 
-(defun javascript/post-init-company ()
-  (spacemacs|add-company-backends
-    :backends company-capf
-    :modes coffee-mode))
+;; (defun javascript/post-init-company ()
+;;   (spacemacs|add-company-backends
+;;     :backends company-capf
+;;     :modes coffee-mode))
 
 (defun javascript/post-init-flycheck ()
-  (dolist (mode '(coffee-mode js2-mode json-mode))
+  (dolist (mode '(js2-mode json-mode))
     (spacemacs/enable-flycheck mode)))
 
 (defun javascript/post-init-ggtags ()
