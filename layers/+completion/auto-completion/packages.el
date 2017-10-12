@@ -95,6 +95,7 @@
       (let ((map company-active-map))
         (define-key map (kbd "C-/")   'company-search-candidates)
         (define-key map (kbd "C-M-/") 'company-filter-candidates)
+        (define-key map (kbd "C-w") nil)
         (define-key map (kbd "C-d")   'company-show-doc-buffer))
       (add-hook 'spacemacs-editing-style-hook 'spacemacs//company-active-navigation)
       ;; ensure that the correct bindings are set at startup
@@ -146,6 +147,7 @@
 (defun auto-completion/init-hippie-exp ()
   ;; replace dabbrev-expand
   (global-set-key (kbd "M-/") 'hippie-expand)
+  (evil-global-set-key 'insert (kbd "C-l") 'hippie-expand)
   (define-key evil-insert-state-map [remap evil-complete-previous] 'hippie-expand)
   (setq hippie-expand-try-functions-list
         '(
