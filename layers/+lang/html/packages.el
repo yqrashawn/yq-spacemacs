@@ -19,7 +19,7 @@
         evil-matchit
         flycheck
         ;; haml-mode
-        (helm-css-scss :requires helm)
+        ;; (helm-css-scss :requires helm)
         ;; impatient-mode
         ;; less-css-mode
         ;; pug-mode
