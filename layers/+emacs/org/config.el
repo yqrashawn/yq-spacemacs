@@ -11,7 +11,7 @@
 
 ;; Variables
 
-(defvar org-want-todo-bindings nil
+(defvar org-want-todo-bindings t
   "If non-nil, evil-org's todo bindings are activated.")
 
 (defvar org-enable-bootstrap-support nil
