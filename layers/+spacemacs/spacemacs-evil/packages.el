@@ -125,7 +125,7 @@
       ;; evil-mc is not compatible with the paste transient state
       (define-key evil-normal-state-map "p" 'spacemacs/evil-mc-paste-after)
       (define-key evil-normal-state-map "P" 'spacemacs/evil-mc-paste-before)
-      (setq evil-mc-one-cursor-show-mode-line-text nil))))
+      (setq evil-mc-one-cursor-show-mode-line-text t))))
 
 ;; other commenting functions in funcs.el with keybinds in keybindings.el
 (defun spacemacs-evil/init-evil-nerd-commenter ()
