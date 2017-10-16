@@ -16,7 +16,7 @@
   "Options are `git-gutter', `git-gutter+', and `diff-hl' to show
 version-control markers.")
 
-(defvar version-control-diff-side 'right
+(defvar version-control-diff-side 'left
   "Side on which to show version-control markers.
 Options are `left' and `right'.")
 
