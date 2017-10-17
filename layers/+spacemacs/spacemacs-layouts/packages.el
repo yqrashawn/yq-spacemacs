@@ -37,8 +37,8 @@
  [_<tab>_]^^^^    last workspace     [_?_] toggle help\n
  [_c_/_C_]^^      create workspace
  [_l_]^^^^        layouts
- [_n_/_C-l_]^^    next workspace
- [_N_/_p_/_C-h_]  prev workspace\n
+ [_n_]^^    next workspace
+ [_N_/_p_]  prev workspace\n
  [_w_]^^^^       workspace w/helm/ivy\n")
 
       (spacemacs|define-transient-state workspaces
