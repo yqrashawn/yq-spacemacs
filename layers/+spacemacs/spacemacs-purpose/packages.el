@@ -144,4 +144,5 @@
       ;; with original `C-x C-f', `C-x b', etc. and `semantic' key bindings.
       (setcdr purpose-mode-map nil)
       (spacemacs|diminish purpose-mode)
-      (purpose-x-golden-ratio-setup))))
+      ;; (purpose-x-golden-ratio-setup)
+      )))
