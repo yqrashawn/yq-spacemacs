@@ -8,7 +8,6 @@
 ;; This file is not part of GNU Emacs.
 ;;
 ;;; License: GPLv3
-
 (setq javascript-packages
       '(
         add-node-modules-path
@@ -25,6 +24,7 @@
         js2-refactor
         json-mode
         json-snatcher
+        prettier-js
         (tern :toggle (spacemacs//tern-detect))
         web-beautify
         skewer-mode
@@ -33,6 +33,27 @@
                              :fetcher github
                              :repo "codefalling/vue-mode"))
         ))
+
+(defun javascript/init-prettier-js ()
+  (use-package prettier-js
+    :mode (("\\.js\\'" . js2-mode) ("\\.ts\\'" . typescript-mode) ("\\.html\\'" . web-mode) ("\\.jsx\\'" . react-mode))
+    :commands prettier-js-mode
+    :defer t
+    :config
+    (progn
+      (prettier-js-mode)
+      (add-hook 'js2-mode-hook 'prettier-js-mode)
+      (add-hook 'typescript-mode-hook 'prettier-js-mode)
+      (add-hook 'react-mode-hook 'prettier-js-mode)
+      (defun enable-minor-mode (my-pair)
+        "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
+        (if (buffer-file-name)
+            (if (string-match (car my-pair) buffer-file-name)
+                (funcall (cdr my-pair)))))
+      (add-hook 'web-mode-hook #'(lambda ()
+                                   (enable-minor-mode
+                                    '("\\.jsx?\\'" . prettier-js-mode))))
+      )))
 
 (defun javascript/init-vue-mode ()
   (use-package vue-mode))
