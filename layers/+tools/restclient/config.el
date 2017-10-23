@@ -13,5 +13,3 @@
 
 (defvar restclient-use-org nil
   "If non-nil use `ob-http' instead of `restclient'.")
-
-(spacemacs|defvar-company-backends restclient-mode)

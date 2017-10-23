@@ -52,12 +52,12 @@
         "R" 'restclient-http-send-current-raw
         "y" 'restclient-copy-curl-command))))
 
-(defun restclient/init-company-restclient ()
-  (use-package company-restclient
-    :defer t
-    :init (spacemacs|add-company-backends
-            :backends company-restclient
-            :modes restclient-mode)))
+; (defun restclient/init-company-restclient ()
+  ; (use-package company-restclient
+    ; :defer t
+    ; :init (spacemacs|add-company-backends
+            ; :backends company-restclient
+            ; :modes restclient-mode)))
 
 (defun restclient/init-restclient-helm ()
   (use-package restclient-helm
