@@ -15,8 +15,8 @@
   "If `variables' colorize variables, if `all' colorize all identifiers in
 programming language buffers.")
 
-(defvar colors-enable-nyan-cat-progress-bar nil
-  "If non nil all nyan cat packages are enabled (for now only `nyan-mode').")
+;; (defvar colors-enable-nyan-cat-progress-bar nil
+;;   "If non nil all nyan cat packages are enabled (for now only `nyan-mode').")
 
 ;; IMPORTANT INFORMATION FOR CONTRIBUTORS:
 ;; Do not edit these defaults. Let the user change them if they really want to.

@@ -13,7 +13,7 @@
   '(
     ;; not working well for now
     ;; rainbow-blocks
-    (nyan-mode :location local)
+    ;; (nyan-mode :location local)
     color-identifiers-mode
     rainbow-identifiers
     rainbow-mode
@@ -24,23 +24,23 @@
 ;;     :disabled t
 ;;     :init (add-hook 'emacs-lisp-mode-hook 'rainbow-blocks-mode)))
 
-(defun colors/init-nyan-mode ()
-  (use-package nyan-mode
-    :if colors-enable-nyan-cat-progress-bar
-    :config
-    (progn
-      (setq nyan-wavy-trail t)
-      (setq nyan-animate-nyancat t)
-      (nyan-mode)
-      ;; explicitly re-enable the cat for the first GUI client
-      (spacemacs|do-after-display-system-init
-       (nyan-mode -1)
-       (nyan-mode))
+;; (defun colors/init-nyan-mode ()
+;;   (use-package nyan-mode
+;;     :if colors-enable-nyan-cat-progress-bar
+;;     :config
+;;     (progn
+;;       (setq nyan-wavy-trail t)
+;;       (setq nyan-animate-nyancat t)
+;;       (nyan-mode)
+;;       ;; explicitly re-enable the cat for the first GUI client
+;;       (spacemacs|do-after-display-system-init
+;;        (nyan-mode -1)
+;;        (nyan-mode))
 
-      (spacemacs|add-toggle nyan-cat-progress-bar
-        :mode nyan-mode
-        :documentation "Show a nyan cat progress bar in the mode-line."
-        :evil-leader "tmn"))))
+;;       (spacemacs|add-toggle nyan-cat-progress-bar
+;;         :mode nyan-mode
+;;         :documentation "Show a nyan cat progress bar in the mode-line."
+;;         :evil-leader "tmn"))))
 
 (defun colors/init-color-identifiers-mode ()
   (use-package color-identifiers-mode
