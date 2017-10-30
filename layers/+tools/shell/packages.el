@@ -172,7 +172,11 @@
       (spacemacs/set-leader-keys-for-major-mode 'term-mode
         "c" 'multi-term
         "p" 'multi-term-prev
-        "n" 'multi-term-next))))
+        "n" 'multi-term-next)
+      (global-set-key (kbd "H-]") 'multi-term-next)
+      (global-set-key (kbd "H-[") 'multi-term-prev)
+      (global-set-key (kbd "H-p") 'multi-term)
+      )))
 
 (defun shell/pre-init-org ()
   (spacemacs|use-package-add-hook org
