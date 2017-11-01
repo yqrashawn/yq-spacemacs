@@ -42,9 +42,9 @@
     :config
     (progn
       (prettier-js-mode)
-      (add-hook 'js2-mode-hook 'prettier-js-mode)
-      (add-hook 'typescript-mode-hook 'prettier-js-mode)
-      (add-hook 'react-mode-hook 'prettier-js-mode)
+      ;; (add-hook 'js2-mode-hook 'prettier-js-mode)
+      ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
+      ;; (add-hook 'react-mode-hook 'prettier-js-mode)
       (defun enable-minor-mode (my-pair)
         "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
         (if (buffer-file-name)
