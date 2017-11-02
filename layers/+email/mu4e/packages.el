@@ -12,7 +12,6 @@
 (setq mu4e-packages
       '(
         (mu4e :location site)
-        ;; mu4e
         mu4e-alert
         mu4e-maildirs-extension
         org

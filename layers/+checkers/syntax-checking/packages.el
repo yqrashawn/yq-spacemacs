@@ -12,7 +12,7 @@
 (setq syntax-checking-packages
   '(
     flycheck
-    ;; flycheck-pos-tip
+    flycheck-pos-tip
     popwin
     ))
 
@@ -95,13 +95,13 @@
         "ev" 'flycheck-verify-setup
         "ex" 'flycheck-explain-error-at-point))))
 
-;; (defun syntax-checking/init-flycheck-pos-tip ()
-;;   (use-package flycheck-pos-tip
-;;     :if syntax-checking-enable-tooltips
-;;     :defer t
-;;     :init
-;;     (with-eval-after-load 'flycheck
-;;       (flycheck-pos-tip-mode))))
+(defun syntax-checking/init-flycheck-pos-tip ()
+  (use-package flycheck-pos-tip
+    :if syntax-checking-enable-tooltips
+    :defer t
+    :init
+    (with-eval-after-load 'flycheck
+      (flycheck-pos-tip-mode))))
 
 (defun syntax-checking/post-init-popwin ()
   (push '("^\\*Flycheck.+\\*$"

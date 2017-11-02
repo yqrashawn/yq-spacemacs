@@ -17,7 +17,7 @@
         (eshell :location built-in)
         eshell-prompt-extras
         eshell-z
-        ;; helm
+        helm
         magit
         multi-term
         org
@@ -144,15 +144,15 @@
     (with-eval-after-load 'eshell
       (require 'eshell-z))))
 
-;; (defun shell/pre-init-helm ()
-;;   (spacemacs|use-package-add-hook helm
-;;     :post-init
-;;     (progn
-;;       ;; eshell
-;;       (add-hook 'eshell-mode-hook 'spacemacs/init-helm-eshell)
-;;       ;;shell
-;;       (spacemacs/set-leader-keys-for-major-mode 'shell-mode
-;;         "H" 'spacemacs/helm-shell-history))))
+(defun shell/pre-init-helm ()
+  (spacemacs|use-package-add-hook helm
+    :post-init
+    (progn
+      ;; eshell
+      (add-hook 'eshell-mode-hook 'spacemacs/init-helm-eshell)
+      ;;shell
+      (spacemacs/set-leader-keys-for-major-mode 'shell-mode
+        "H" 'spacemacs/helm-shell-history))))
 
 (defun shell/pre-init-magit ()
   (spacemacs|use-package-add-hook magit
@@ -172,11 +172,7 @@
       (spacemacs/set-leader-keys-for-major-mode 'term-mode
         "c" 'multi-term
         "p" 'multi-term-prev
-        "n" 'multi-term-next)
-      (global-set-key (kbd "H-]") 'multi-term-next)
-      (global-set-key (kbd "H-[") 'multi-term-prev)
-      (global-set-key (kbd "H-p") 'multi-term)
-      )))
+        "n" 'multi-term-next))))
 
 (defun shell/pre-init-org ()
   (spacemacs|use-package-add-hook org

@@ -20,17 +20,12 @@
     :init
     (progn
       (if better-defaults-move-to-beginning-of-code-first
-          (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
-        (global-set-key (kbd "C-a") 'mwim-beginning-of-line-or-code))
+	  (global-set-key (kbd "C-a") 'mwim-beginning-of-code-or-line)
+	(global-set-key (kbd "C-a") 'mwim-beginning-of-line-or-code))
 
       (if better-defaults-move-to-end-of-code-first
-          (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line)
-        (global-set-key (kbd "C-e") 'mwim-end-of-line-or-code))
-
-      ;; mwim don't work well with evil-mc
-      (define-key evil-normal-state-map (kbd "C-a") 'evil-first-non-blank)
-      (define-key evil-normal-state-map (kbd "C-e") 'evil-end-of-line)
-      )))
+	  (global-set-key (kbd "C-e") 'mwim-end-of-code-or-line)
+	(global-set-key (kbd "C-e") 'mwim-end-of-line-or-code)))))
 
 (defun better-defaults/init-unfill ()
   (use-package unfill

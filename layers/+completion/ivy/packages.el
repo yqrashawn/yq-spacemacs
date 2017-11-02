@@ -11,17 +11,17 @@
 
 (setq ivy-packages
       '(
-        ;; auto-highlight-symbol
-        ;; bookmark
+        auto-highlight-symbol
+        bookmark
         counsel
         (counsel-projectile :requires projectile)
         evil
         flx
-        ;; helm-make
+        helm-make
         ivy
         ivy-hydra
         (ivy-spacemacs-help :location local)
-        ;; persp-mode
+        persp-mode
         projectile
         smex
         recentf
@@ -29,17 +29,18 @@
         wgrep
         ))
 
-;; (defun ivy/pre-init-auto-highlight-symbol ()
-;;   (spacemacs|use-package-add-hook auto-highlight-symbol
-;;     :post-init
-;;     ;; add some functions to ahs transient states
-;;     (setq spacemacs--symbol-highlight-transient-state-doc
-;;           (concat spacemacs--symbol-highlight-transient-state-doc
-;;                   "  [_b_] search buffers [_/_] search proj [_f_] search files")
-;;           spacemacs-symbol-highlight-transient-state-add-bindings
-;;           '(("/" spacemacs/search-project-auto-region-or-symbol :exit t)
-;;             ("b" spacemacs/swiper-all-region-or-symbol :exit t)
-;;             ("f" spacemacs/search-auto-region-or-symbol :exit t)))))
+(defun ivy/pre-init-auto-highlight-symbol ()
+  (spacemacs|use-package-add-hook auto-highlight-symbol
+    :post-init
+    ;; add some functions to ahs transient states
+    (setq spacemacs--symbol-highlight-transient-state-doc
+          (concat spacemacs--symbol-highlight-transient-state-doc
+                  "  [_b_] search buffers [_/_] search proj [_f_] search files [_s_] swiper"))
+    (spacemacs/transient-state-register-add-bindings 'symbol-highlight
+      '(("/" spacemacs/search-project-auto-region-or-symbol :exit t)
+        ("b" spacemacs/swiper-all-region-or-symbol :exit t)
+        ("f" spacemacs/search-auto-region-or-symbol :exit t)
+        ("s" spacemacs/swiper-region-or-symbol :exit t)))))
 
 (defun ivy/init-counsel ()
   (use-package counsel
@@ -160,15 +161,15 @@
 (defun ivy/init-flx ()
   (use-package flx))
 
-;; (defun ivy/init-helm-make ()
-;;   (use-package helm-make
-;;     :defer t
-;;     :init
-;;     (progn
-;;       (setq helm-make-completion-method 'ivy)
-;;       (spacemacs/set-leader-keys
-;;         "cc" 'helm-make-projectile
-;;         "cm" 'helm-make))))
+(defun ivy/init-helm-make ()
+  (use-package helm-make
+    :defer t
+    :init
+    (progn
+      (setq helm-make-completion-method 'ivy)
+      (spacemacs/set-leader-keys
+        "cc" 'helm-make-projectile
+        "cm" 'helm-make))))
 
 (defun ivy/post-init-imenu ()
   (spacemacs/set-leader-keys "ji" 'counsel-imenu))
@@ -222,37 +223,37 @@
      spacemacs--persp-display-buffers-func 'spacemacs/ivy-spacemacs-layout-buffer
      spacemacs--persp-display-perspectives-func 'spacemacs/ivy-spacemacs-layouts)))
 
-;; (defun ivy/post-init-persp-mode ()
-;;   ;; based on https://gist.github.com/Bad-ptr/1aca1ec54c3bdb2ee80996eb2b68ad2d#file-persp-ivy-el
-;;   (add-hook 'ivy-ignore-buffers #'spacemacs//layout-not-contains-buffer-p)
-;;   (setq ivy-sort-functions-alist
-;;         (append ivy-sort-functions-alist
-;;                 '((persp-kill-buffer . nil)
-;;                   (persp-remove-buffer . nil)
-;;                   (persp-add-buffer . nil)
-;;                   (persp-switch . nil)
-;;                   (persp-window-switch . nil)
-;;                   (persp-frame-switch . nil))))
+(defun ivy/post-init-persp-mode ()
+  ;; based on https://gist.github.com/Bad-ptr/1aca1ec54c3bdb2ee80996eb2b68ad2d#file-persp-ivy-el
+  (add-hook 'ivy-ignore-buffers #'spacemacs//layout-not-contains-buffer-p)
+  (setq ivy-sort-functions-alist
+        (append ivy-sort-functions-alist
+                '((persp-kill-buffer . nil)
+                  (persp-remove-buffer . nil)
+                  (persp-add-buffer . nil)
+                  (persp-switch . nil)
+                  (persp-window-switch . nil)
+                  (persp-frame-switch . nil))))
 
-;;   (ivy-set-actions
-;;    'spacemacs/ivy-spacemacs-layouts
-;;    '(("c" persp-kill-without-buffers "Close layout(s)")
-;;      ("k" persp-kill  "Kill layout(s)")))
-;;   ;; TODO: better handling of C and X bindings for ivy
-;;   ;;       check ivy/pre-init-persp-mode
-;;   (spacemacs/transient-state-register-remove-bindings 'layouts
-;;     '("C" "X"))
-;;   (spacemacs/transient-state-register-add-bindings 'layouts
-;;     '(("C" spacemacs/ivy-spacemacs-layout-close-other :exit t)
-;;       ("X" spacemacs/ivy-spacemacs-layout-kill-other :exit t))))
+  (ivy-set-actions
+   'spacemacs/ivy-spacemacs-layouts
+   '(("c" persp-kill-without-buffers "Close layout(s)")
+     ("k" persp-kill  "Kill layout(s)")))
+  ;; TODO: better handling of C and X bindings for ivy
+  ;;       check ivy/pre-init-persp-mode
+  (spacemacs/transient-state-register-remove-bindings 'layouts
+    '("C" "X"))
+  (spacemacs/transient-state-register-add-bindings 'layouts
+    '(("C" spacemacs/ivy-spacemacs-layout-close-other :exit t)
+      ("X" spacemacs/ivy-spacemacs-layout-kill-other :exit t))))
 
 (defun ivy/post-init-projectile ()
   (setq projectile-completion-system 'ivy)
   (spacemacs/set-leader-keys
     "pv"  'projectile-vc))
 
-;; (defun ivy/post-init-bookmark ()
-  ;; (spacemacs/set-leader-keys "fb" 'counsel-bookmark))
+(defun ivy/post-init-bookmark ()
+  (spacemacs/set-leader-keys "fb" 'counsel-bookmark))
 
 (defun ivy/init-smex ()
   (use-package smex

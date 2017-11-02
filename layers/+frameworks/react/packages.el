@@ -28,9 +28,6 @@
 (defun react/post-init-emmet-mode ()
   (add-hook 'react-mode-hook 'emmet-mode))
 
-(defun react/post-init-emmet-mode ()
-  (add-hook 'react-mode-hook 'emmet-mode))
-
 (defun react/post-init-evil-matchit ()
   (with-eval-after-load 'evil-matchit
     (plist-put evilmi-plugins 'react-mode

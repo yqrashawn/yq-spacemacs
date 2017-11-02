@@ -56,23 +56,23 @@ Otherwise, revert to the default behavior (i.e. enable `evil-insert-state')."
                       :background nil
                       :foreground nil))
 
-;; (defun spacemacs/linum-relative-toggle ()
-;;   (interactive)
-;;   (if (not (bound-and-true-p linum-relative-mode))
-;;       (linum-mode))
-;;   (linum-relative-toggle))
+(defun spacemacs/linum-relative-toggle ()
+  (interactive)
+  (if (not (bound-and-true-p linum-relative-mode))
+      (linum-mode))
+  (linum-relative-toggle))
 
 
 ;; vi-tilde-fringe
 
-;; (defun spacemacs/disable-vi-tilde-fringe ()
-;;   "Disable `vi-tilde-fringe' in the current buffer."
-;;   (vi-tilde-fringe-mode -1))
+(defun spacemacs/disable-vi-tilde-fringe ()
+  "Disable `vi-tilde-fringe' in the current buffer."
+  (vi-tilde-fringe-mode -1))
 
-;; (defun spacemacs/disable-vi-tilde-fringe-read-only ()
-;;   "Disable `vi-tilde-fringe' in the current buffer if it is read only."
-;;   (when buffer-read-only
-;;     (spacemacs/disable-vi-tilde-fringe)))
+(defun spacemacs/disable-vi-tilde-fringe-read-only ()
+  "Disable `vi-tilde-fringe' in the current buffer if it is read only."
+  (when buffer-read-only
+    (spacemacs/disable-vi-tilde-fringe)))
 
 
 ;; multiple-cursors

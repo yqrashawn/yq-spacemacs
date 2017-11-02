@@ -11,7 +11,7 @@
 
 (setq spacemacs-purpose-packages
       '(eyebrowse
-        ;; (helm-purpose :requires helm)
+        (helm-purpose :requires helm)
         (ivy-purpose :requires ivy)
         popwin
         (spacemacs-purpose-popwin
@@ -27,19 +27,19 @@
       ;; sync with eyebrowse now
       (spacemacs/window-purpose-sync-eyebrowse))))
 
-;; (defun spacemacs-purpose/init-helm-purpose ()
-;;   (use-package helm-purpose
-;;     :defer t
-;;     :init
-;;     (progn
-;;       (setq purpose-preferred-prompt 'helm)
-;;       ;; remap bindings defined with `spacemacs/set-leader-keys'
-;;       (global-set-key [remap purpose-switch-buffer-with-purpose]
-;;                       #'helm-purpose-switch-buffer-with-purpose)
-;;       (global-set-key [remap switch-buffer-without-purpose]
-;;                       #'helm-purpose-mini-ignore-purpose)
-;;       (global-set-key [remap purpose-switch-buffer-with-some-purpose]
-;;                       #'helm-purpose-switch-buffer-with-some-purpose))))
+(defun spacemacs-purpose/init-helm-purpose ()
+  (use-package helm-purpose
+    :defer t
+    :init
+    (progn
+      (setq purpose-preferred-prompt 'helm)
+      ;; remap bindings defined with `spacemacs/set-leader-keys'
+      (global-set-key [remap purpose-switch-buffer-with-purpose]
+                      #'helm-purpose-switch-buffer-with-purpose)
+      (global-set-key [remap switch-buffer-without-purpose]
+                      #'helm-purpose-mini-ignore-purpose)
+      (global-set-key [remap purpose-switch-buffer-with-some-purpose]
+                      #'helm-purpose-switch-buffer-with-some-purpose))))
 
 (defun spacemacs-purpose/init-ivy-purpose ()
   ;; vanilla lets `ivy' take over
@@ -144,5 +144,4 @@
       ;; with original `C-x C-f', `C-x b', etc. and `semantic' key bindings.
       (setcdr purpose-mode-map nil)
       (spacemacs|diminish purpose-mode)
-      ;; (purpose-x-golden-ratio-setup)
-      )))
+      (purpose-x-golden-ratio-setup))))

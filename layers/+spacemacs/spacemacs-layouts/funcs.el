@@ -66,6 +66,20 @@ current perspective."
 
 ;; Persp transient-state
 
+(defvar spacemacs--persp-display-buffers-func 'ignore
+  "Function to display buffers in the perspective.")
+(defun spacemacs/persp-buffers ()
+  "Call the function defined in `spacemacs--persp-display-buffers-func'"
+  (interactive)
+  (call-interactively spacemacs--persp-display-buffers-func))
+
+(defvar spacemacs--persp-display-perspectives-func 'ignore
+  "Function to display perspectives.")
+(defun spacemacs/persp-perspectives ()
+  "Call the function defined in `spacemacs--persp-display-perspectives-func'"
+  (interactive)
+  (call-interactively spacemacs--persp-display-perspectives-func))
+
 (defun spacemacs//layouts-ts-toggle-hint ()
   "Toggle the full hint docstring for the layouts transient-state."
   (interactive)
@@ -103,23 +117,49 @@ current perspective."
                (propertize "?" 'face 'hydra-face-red)
                "] help)")))))
 
+(defun spacemacs//generate-layout-name (pos)
+  "Generate name for layout of position POS.
+POS should be a number between 1 and 9, where 1 represents the
+2nd layout, 2 represents the 3rd and so on. 9 represents the 10th
+layout, which is also knows as the 0th layout.
+
+ If no name can be generated, return nil."
+  (catch 'found
+    ;; return 1st available name
+    (dolist (name (nth pos spacemacs-generic-layout-names))
+      (unless (persp-p (persp-get-by-name name))
+        (throw 'found name)))
+
+    ;; return 1st available name from grab-bag
+    (dolist (name (car spacemacs-generic-layout-names))
+      (unless (persp-p (persp-get-by-name name))
+        (throw 'found name)))))
+
 (defun spacemacs/layout-switch-by-pos (pos)
-  "Switch to perspective of position POS."
+  "Switch to perspective of position POS.
+If POS has no layout, and `dotspacemacs-auto-generate-layout-names'
+is non-nil, create layout with auto-generated name. Otherwise,
+ask the user if a new layout should be created."
   (let ((persp-to-switch
          (nth pos (persp-names-current-frame-fast-ordered))))
     (if persp-to-switch
         (persp-switch persp-to-switch)
-      (when (y-or-n-p
-             (concat "Perspective in this position doesn't exist.\n"
-                     "Do you want to create one? "))
-        (let ((persp-reset-windows-on-nil-window-conf t))
+      (let ((persp-reset-windows-on-nil-window-conf t)
+            (generated-name (and dotspacemacs-auto-generate-layout-names
+                                 (spacemacs//generate-layout-name pos))))
+        (cond
+         (generated-name
+          (persp-switch generated-name))
+         ((y-or-n-p (concat "Layout in this position doesn't exist. "
+                            "Do you want to create one? "))
           (persp-switch nil)
-          (spacemacs/home-delete-other-windows))))))
+          (spacemacs/home-delete-other-windows)))))))
 
 ;; Define all `spacemacs/persp-switch-to-X' functions
 (dolist (i (number-sequence 9 0 -1))
   (eval `(defun ,(intern (format "spacemacs/persp-switch-to-%s" i)) nil
-           ,(format "Switch to layout %s." i)
+           ,(format "Switch to layout %s.\n%s"
+                    i "See `spacemacs/layout-switch-by-pos' for details.")
            (interactive)
            (spacemacs/layout-switch-by-pos ,(if (eq 0 i) 9 (1- i))))))
 
@@ -191,14 +231,19 @@ current perspective."
 
 (defmacro spacemacs|define-custom-layout (name &rest props)
   "Define a custom-perspective called NAME.
+
 FUNC is a FUNCTION defined using NAME and the result of
 `spacemacs//custom-layout-func-name', it takes care of
 creating the perspective NAME and executing the expressions given
 in the :body property to this macro.
+
 NAME is a STRING.
+
 Available PROPS:
+
 `:binding STRING'
    Key to be bound to the function FUNC
+
 `:body EXPRESSIONS'
   One or several EXPRESSIONS that are going to be evaluated after
   we change into the perspective NAME."
@@ -226,7 +271,7 @@ Available PROPS:
        ;; Check for Clashes
        (if ,already-defined?
            (unless (equal ,already-defined? ,name)
-             (spacemacs-buffer/warning "Replacing existing binding \"%s\" for %s with %s"
+             (spacemacs-buffer/message "Replacing existing binding \"%s\" for %s with %s"
                                        ,binding ,already-defined? ,name)
              (setq spacemacs--custom-layout-alist
                    (delete (assoc ,binding spacemacs--custom-layout-alist)
@@ -294,8 +339,10 @@ If match is found
 f1: (default) Select perspective
 f2: Close Perspective(s) <- mark with C-SPC to close more than one-window
 f3: Kill Perspective(s)
+
 If match is not found
 <enter> Creates perspective
+
 Closing doesn't kill buffers inside the perspective while killing
 perspectives does."
   (interactive)
@@ -546,6 +593,7 @@ WORKSPACE-PARAMS should be a list containing 3 elements in this order:
 PERSP is the perspective, and defaults to the current perspective.
 FRAME is the frame where the parameters came from, and defaults to the
 current frame.
+
 Each perspective has two sets of workspace parameters: one set for
 graphical frames, and one set for terminal frames."
   (let ((param-names (if (display-graphic-p frame)
@@ -581,6 +629,7 @@ graphical frames, and one set for terminal frames."
 (defun spacemacs/load-eyebrowse-after-loading-layout (_state-file _phash persp-names)
   "Bridge between `persp-after-load-state-functions' and
 `spacemacs/load-eyebrowse-for-perspective'.
+
 _PHASH is the hash were the loaded perspectives were placed, and
 PERSP-NAMES are the names of these perspectives."
   (let ((cur-persp (get-current-persp)))

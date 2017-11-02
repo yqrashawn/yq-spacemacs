@@ -24,7 +24,7 @@
         (eldoc :location built-in)
         evil-escape
         (evil-evilified-state :location local :step pre :protected t)
-        ;; evil-visualstar
+        evil-visualstar
         ;; some packages need to look for binaries,
         ;; which means the path must be ready by then
         (exec-path-from-shell :step pre
@@ -42,7 +42,7 @@
         (package-menu :location built-in)
         ;; page-break-lines is shipped with spacemacs core
         (page-break-lines :location built-in)
-        ;; pcre2el
+        pcre2el
         (process-menu :location built-in)
         projectile
         (recentf :location built-in)
@@ -174,16 +174,16 @@
   (define-key evil-evilified-state-map (kbd dotspacemacs-leader-key)
     spacemacs-default-map))
 
-;; (defun spacemacs-base/init-evil-visualstar ()
-;;   (use-package evil-visualstar
-;;     :commands (evil-visualstar/begin-search-forward
-;;                evil-visualstar/begin-search-backward)
-;;     :init
-;;     (progn
-;;       (define-key evil-visual-state-map (kbd "*")
-;;         'evil-visualstar/begin-search-forward)
-;;       (define-key evil-visual-state-map (kbd "#")
-;;         'evil-visualstar/begin-search-backward))))
+(defun spacemacs-base/init-evil-visualstar ()
+  (use-package evil-visualstar
+    :commands (evil-visualstar/begin-search-forward
+               evil-visualstar/begin-search-backward)
+    :init
+    (progn
+      (define-key evil-visual-state-map (kbd "*")
+        'evil-visualstar/begin-search-forward)
+      (define-key evil-visual-state-map (kbd "#")
+        'evil-visualstar/begin-search-backward))))
 
 (defun spacemacs-base/init-exec-path-from-shell ()
   (use-package exec-path-from-shell
@@ -275,30 +275,29 @@
   (global-page-break-lines-mode t)
   (spacemacs|hide-lighter page-break-lines-mode))
 
-;; TODO: regex
-;; (defun spacemacs-base/init-pcre2el ()
-;;   (use-package pcre2el
-;;     :defer t
-;;     :init
-;;     (progn
-;;       (spacemacs/declare-prefix "xr" "regular expressions")
-;;       (spacemacs/declare-prefix "xre" "elisp")
-;;       (spacemacs/declare-prefix "xrp" "pcre")
-;;       (spacemacs/set-leader-keys
-;;         "xr/"  'rxt-explain
-;;         "xr'"  'rxt-convert-to-strings
-;;         "xrt"  'rxt-toggle-elisp-rx
-;;         "xrx"  'rxt-convert-to-rx
-;;         "xrc"  'rxt-convert-syntax
-;;         "xre/" 'rxt-explain-elisp
-;;         "xre'" 'rxt-elisp-to-strings
-;;         "xrep" 'rxt-elisp-to-pcre
-;;         "xret" 'rxt-toggle-elisp-rx
-;;         "xrex" 'rxt-elisp-to-rx
-;;         "xrp/" 'rxt-explain-pcre
-;;         "xrp'" 'rxt-pcre-to-strings
-;;         "xrpe" 'rxt-pcre-to-elisp
-;;         "xrpx" 'rxt-pcre-to-rx))))
+(defun spacemacs-base/init-pcre2el ()
+  (use-package pcre2el
+    :defer t
+    :init
+    (progn
+      (spacemacs/declare-prefix "xr" "regular expressions")
+      (spacemacs/declare-prefix "xre" "elisp")
+      (spacemacs/declare-prefix "xrp" "pcre")
+      (spacemacs/set-leader-keys
+        "xr/"  'rxt-explain
+        "xr'"  'rxt-convert-to-strings
+        "xrt"  'rxt-toggle-elisp-rx
+        "xrx"  'rxt-convert-to-rx
+        "xrc"  'rxt-convert-syntax
+        "xre/" 'rxt-explain-elisp
+        "xre'" 'rxt-elisp-to-strings
+        "xrep" 'rxt-elisp-to-pcre
+        "xret" 'rxt-toggle-elisp-rx
+        "xrex" 'rxt-elisp-to-rx
+        "xrp/" 'rxt-explain-pcre
+        "xrp'" 'rxt-pcre-to-strings
+        "xrpe" 'rxt-pcre-to-elisp
+        "xrpx" 'rxt-pcre-to-rx))))
 
 (defun spacemacs-base/init-process-menu ()
   (evilified-state-evilify process-menu-mode process-menu-mode-map))
@@ -516,10 +515,8 @@
                           :background nil)
       (set-face-attribute 'whitespace-indentation nil
                           :background nil)
-      ;; (spacemacs|diminish whitespace-mode " ⓦ" " w")
-      ;; (spacemacs|diminish global-whitespace-mode " ⓦ" " w"))))
-      (spacemacs|diminish whitespace-mode "" "")
-      (spacemacs|diminish global-whitespace-mode "" ""))))
+      (spacemacs|diminish whitespace-mode " ⓦ" " w")
+      (spacemacs|diminish global-whitespace-mode " ⓦ" " w"))))
 
 (defun spacemacs-base/init-winner ()
   (use-package winner

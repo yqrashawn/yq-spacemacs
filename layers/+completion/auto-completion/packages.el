@@ -9,17 +9,16 @@
 ;;
 ;;; License: GPLv3
 
-
 (setq auto-completion-packages
       '(
-        ;; auto-complete
-        ;; ac-ispell
+        auto-complete
+        ac-ispell
         company
         (company-quickhelp :toggle auto-completion-enable-help-tooltip)
         company-statistics
         fuzzy
-        ;; (helm-company :requires helm)
-        ;; (helm-c-yasnippet :requires helm)
+        (helm-company :requires helm)
+        (helm-c-yasnippet :requires helm)
         hippie-exp
         yasnippet
         auto-yasnippet
@@ -28,43 +27,43 @@
 
 ;; TODO replace by company-ispell which comes with company
 ;; to be moved to spell-checking layer as well
-;; (defun auto-completion/init-ac-ispell ()
-;;   (use-package ac-ispell
-;;     :defer t
-;;     :init
-;;     (progn
-;;       (setq ac-ispell-requires 4)
-;;       (with-eval-after-load 'auto-complete
-;;         (ac-ispell-setup))
-;;       ;; (add-hook 'markdown-mode-hook 'ac-ispell-ac-setup)
-;;       )))
+(defun auto-completion/init-ac-ispell ()
+  (use-package ac-ispell
+    :defer t
+    :init
+    (progn
+      (setq ac-ispell-requires 4)
+      (with-eval-after-load 'auto-complete
+        (ac-ispell-setup))
+      ;; (add-hook 'markdown-mode-hook 'ac-ispell-ac-setup)
+      )))
 
-;; (defun auto-completion/init-auto-complete ()
-;;   (use-package auto-complete
-;;     :defer t
-;;     :init
-;;     (setq ac-auto-start 0
-;;           ac-delay 0.2
-;;           ac-quick-help-delay 1.
-;;           ac-use-fuzzy t
-;;           ac-fuzzy-enable t
-;;           ac-comphist-file (concat spacemacs-cache-directory "ac-comphist.dat")
-;;           ;; use 'complete when auto-complete is disabled
-;;           tab-always-indent 'complete
-;;           ac-dwim t)
-;;     :config
-;;     (progn
-;;       (require 'auto-complete-config)
-;;       (setq-default ac-sources '(ac-source-abbrev
-;;                                  ac-source-dictionary
-;;                                  ac-source-words-in-same-mode-buffers))
-;;       (when (configuration-layer/package-used-p 'yasnippet)
-;;         (push 'ac-source-yasnippet ac-sources))
-;;       (add-to-list 'completion-styles 'initials t)
-;;       (define-key ac-completing-map (kbd "C-j") 'ac-next)
-;;       (define-key ac-completing-map (kbd "C-k") 'ac-previous)
-;;       (define-key ac-completing-map (kbd "<S-tab>") 'ac-previous)
-;;       (spacemacs|diminish auto-complete-mode " ⓐ" " a"))))
+(defun auto-completion/init-auto-complete ()
+  (use-package auto-complete
+    :defer t
+    :init
+    (setq ac-auto-start 0
+          ac-delay 0.2
+          ac-quick-help-delay 1.
+          ac-use-fuzzy t
+          ac-fuzzy-enable t
+          ac-comphist-file (concat spacemacs-cache-directory "ac-comphist.dat")
+          ;; use 'complete when auto-complete is disabled
+          tab-always-indent 'complete
+          ac-dwim t)
+    :config
+    (progn
+      (require 'auto-complete-config)
+      (setq-default ac-sources '(ac-source-abbrev
+                                 ac-source-dictionary
+                                 ac-source-words-in-same-mode-buffers))
+      (when (configuration-layer/package-used-p 'yasnippet)
+        (push 'ac-source-yasnippet ac-sources))
+      (add-to-list 'completion-styles 'initials t)
+      (define-key ac-completing-map (kbd "C-j") 'ac-next)
+      (define-key ac-completing-map (kbd "C-k") 'ac-previous)
+      (define-key ac-completing-map (kbd "<S-tab>") 'ac-previous)
+      (spacemacs|diminish auto-complete-mode " ⓐ" " a"))))
 
 (defun auto-completion/init-company ()
   (use-package company
@@ -129,21 +128,21 @@
        (unless (eq auto-completion-enable-help-tooltip 'manual)
          (company-quickhelp-mode))))))
 
-;; (defun auto-completion/init-helm-c-yasnippet ()
-;;   (use-package helm-c-yasnippet
-;;     :defer t
-;;     :init
-;;     (progn
-;;       (spacemacs/set-leader-keys "is" 'spacemacs/helm-yas)
-;;       (setq helm-c-yas-space-match-any-greedy t))))
+(defun auto-completion/init-helm-c-yasnippet ()
+  (use-package helm-c-yasnippet
+    :defer t
+    :init
+    (progn
+      (spacemacs/set-leader-keys "is" 'spacemacs/helm-yas)
+      (setq helm-c-yas-space-match-any-greedy t))))
 
-;; (defun auto-completion/init-helm-company ()
-;;   (use-package helm-company
-;;     :if (configuration-layer/package-used-p 'company)
-;;     :defer t
-;;     :init
-;;     (with-eval-after-load 'company
-;;       (define-key company-active-map (kbd "C-/") 'helm-company))))
+(defun auto-completion/init-helm-company ()
+  (use-package helm-company
+    :if (configuration-layer/package-used-p 'company)
+    :defer t
+    :init
+    (with-eval-after-load 'company
+      (define-key company-active-map (kbd "C-/") 'helm-company))))
 
 (defun auto-completion/init-hippie-exp ()
   ;; replace dabbrev-expand

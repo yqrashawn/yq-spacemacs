@@ -12,174 +12,174 @@
 
 ;; auto-highlight symbol
 
-;; (defun spacemacs/goto-last-searched-ahs-symbol ()
-;;   "Go to the last known occurrence of the last symbol searched with
-;; `auto-highlight-symbol'."
-;;   (interactive)
-;;   (if spacemacs-last-ahs-highlight-p
-;;       (progn (goto-char (nth 1 spacemacs-last-ahs-highlight-p))
-;;              (spacemacs/ahs-highlight-now-wrapper)
-;;              (spacemacs/symbol-highlight-transient-state/body))
-;;     (message "No symbol has been searched for now.")))
+(defun spacemacs/goto-last-searched-ahs-symbol ()
+  "Go to the last known occurrence of the last symbol searched with
+`auto-highlight-symbol'."
+  (interactive)
+  (if spacemacs-last-ahs-highlight-p
+      (progn (goto-char (nth 1 spacemacs-last-ahs-highlight-p))
+             (spacemacs/ahs-highlight-now-wrapper)
+             (spacemacs/symbol-highlight-transient-state/body))
+    (message "No symbol has been searched for now.")))
 
-;; (defun spacemacs/integrate-evil-search (forward)
-;;         ;; isearch-string is last searched item.  Next time
-;;         ;; "n" is hit we will use this.
-;;         (let* ((symbol (evil-find-thing forward 'symbol))
-;;                (regexp (concat "\\<" symbol "\\>")))
-;;           (setq isearch-string regexp
-;;                 isearch-regexp regexp
-;;                 evil-ex-search-pattern (evil-ex-make-search-pattern regexp)))
-;;         ;; Next time "n" is hit, go the correct direction.
-;;         (setq isearch-forward forward)
-;;         ;; ahs does a case sensitive search.  We could set
-;;         ;; this, but it would break the user's current
-;;         ;; sensitivity settings.  We could save the setting,
-;;         ;; then next time the user starts a search we could
-;;         ;; restore the setting.
-;;         ;;(setq case-fold-search nil)
-;;         ;; Place the search term into the search rings.
-;;         (isearch-update-ring isearch-string t)
-;;         (evil-push-search-history isearch-string forward)
-;;         ;; Use this search term for empty pattern "%s//replacement/"
-;;         ;; Append case sensitivity
-;;         (setq evil-ex-last-was-search nil
-;;               evil-ex-substitute-pattern `(,(concat isearch-string "\\C")
-;;                                            nil (0 0))))
+(defun spacemacs/integrate-evil-search (forward)
+        ;; isearch-string is last searched item.  Next time
+        ;; "n" is hit we will use this.
+        (let* ((symbol (evil-find-thing forward 'symbol))
+               (regexp (concat "\\<" symbol "\\>")))
+          (setq isearch-string regexp
+                isearch-regexp regexp
+                evil-ex-search-pattern (evil-ex-make-search-pattern regexp)))
+        ;; Next time "n" is hit, go the correct direction.
+        (setq isearch-forward forward)
+        ;; ahs does a case sensitive search.  We could set
+        ;; this, but it would break the user's current
+        ;; sensitivity settings.  We could save the setting,
+        ;; then next time the user starts a search we could
+        ;; restore the setting.
+        ;;(setq case-fold-search nil)
+        ;; Place the search term into the search rings.
+        (isearch-update-ring isearch-string t)
+        (evil-push-search-history isearch-string forward)
+        ;; Use this search term for empty pattern "%s//replacement/"
+        ;; Append case sensitivity
+        (setq evil-ex-last-was-search nil
+              evil-ex-substitute-pattern `(,(concat isearch-string "\\C")
+                                           nil (0 0))))
 
-;; (defun spacemacs/ensure-ahs-enabled-locally ()
-;;   "Ensures ahs is enabled for the local buffer."
-;;   (unless
-;;       (bound-and-true-p ahs-mode-line)
-;;     (auto-highlight-symbol-mode)
-;;     ))
+(defun spacemacs/ensure-ahs-enabled-locally ()
+  "Ensures ahs is enabled for the local buffer."
+  (unless
+      (bound-and-true-p ahs-mode-line)
+    (auto-highlight-symbol-mode)
+    ))
 
-;; (defun spacemacs/ahs-highlight-now-wrapper ()
-;;   "Safe wrapper for ahs-highlight-now"
-;;   (eval '(progn
-;;            (spacemacs/ensure-ahs-enabled-locally)
-;;            (ahs-highlight-now)) nil))
+(defun spacemacs/ahs-highlight-now-wrapper ()
+  "Safe wrapper for ahs-highlight-now"
+  (eval '(progn
+           (spacemacs/ensure-ahs-enabled-locally)
+           (ahs-highlight-now)) nil))
 
-;; (defun spacemacs/enter-ahs-forward ()
-;;   "Go to the next occurrence of symbol under point with
-;;  `auto-highlight-symbol'"
-;;   (interactive)
-;;   (setq spacemacs--ahs-searching-forward t)
-;;   (spacemacs/quick-ahs-forward))
+(defun spacemacs/enter-ahs-forward ()
+  "Go to the next occurrence of symbol under point with
+ `auto-highlight-symbol'"
+  (interactive)
+  (setq spacemacs--ahs-searching-forward t)
+  (spacemacs/quick-ahs-forward))
 
-;; (defun spacemacs/enter-ahs-backward ()
-;;   "Go to the previous occurrence of symbol under point with
-;;  `auto-highlight-symbol'"
-;;   (interactive)
-;;   (setq spacemacs--ahs-searching-forward nil)
-;;   (spacemacs/quick-ahs-forward))
+(defun spacemacs/enter-ahs-backward ()
+  "Go to the previous occurrence of symbol under point with
+ `auto-highlight-symbol'"
+  (interactive)
+  (setq spacemacs--ahs-searching-forward nil)
+  (spacemacs/quick-ahs-forward))
 
-;; (defun spacemacs/quick-ahs-forward ()
-;;   "Go to the next occurrence of symbol under point with
-;;  `auto-highlight-symbol'"
-;;   (interactive)
-;;   (spacemacs//quick-ahs-move t))
+(defun spacemacs/quick-ahs-forward ()
+  "Go to the next occurrence of symbol under point with
+ `auto-highlight-symbol'"
+  (interactive)
+  (spacemacs//quick-ahs-move t))
 
-;; (defun spacemacs/quick-ahs-backward ()
-;;   "Go to the previous occurrence of symbol under point with
-;;  `auto-highlight-symbol'"
-;;   (interactive)
-;;   (spacemacs//quick-ahs-move nil))
+(defun spacemacs/quick-ahs-backward ()
+  "Go to the previous occurrence of symbol under point with
+ `auto-highlight-symbol'"
+  (interactive)
+  (spacemacs//quick-ahs-move nil))
 
-;; (defun spacemacs//quick-ahs-move (forward)
-;;   "Go to the next occurrence of symbol under point with
-;;  `auto-highlight-symbol'"
-;;   (if (eq forward spacemacs--ahs-searching-forward)
-;;       (progn
-;;         (spacemacs/integrate-evil-search t)
-;;         (spacemacs/ahs-highlight-now-wrapper)
-;;         (evil-set-jump)
-;;         (spacemacs/symbol-highlight-transient-state/body)
-;;         (ahs-forward))
-;;     (progn
-;;       (spacemacs/integrate-evil-search nil)
-;;       (spacemacs/ahs-highlight-now-wrapper)
-;;       (evil-set-jump)
-;;       (spacemacs/symbol-highlight-transient-state/body)
-;;       (ahs-backward))))
+(defun spacemacs//quick-ahs-move (forward)
+  "Go to the next occurrence of symbol under point with
+ `auto-highlight-symbol'"
+  (if (eq forward spacemacs--ahs-searching-forward)
+      (progn
+        (spacemacs/integrate-evil-search t)
+        (spacemacs/ahs-highlight-now-wrapper)
+        (evil-set-jump)
+        (spacemacs/symbol-highlight-transient-state/body)
+        (ahs-forward))
+    (progn
+      (spacemacs/integrate-evil-search nil)
+      (spacemacs/ahs-highlight-now-wrapper)
+      (evil-set-jump)
+      (spacemacs/symbol-highlight-transient-state/body)
+      (ahs-backward))))
 
-;; (defun spacemacs/symbol-highlight ()
-;;   "Highlight the symbol under point with `auto-highlight-symbol'."
-;;   (interactive)
-;;   (spacemacs/ahs-highlight-now-wrapper)
-;;   (setq spacemacs-last-ahs-highlight-p (ahs-highlight-p))
-;;   (spacemacs/symbol-highlight-transient-state/body)
-;;   (spacemacs/integrate-evil-search nil))
+(defun spacemacs/symbol-highlight ()
+  "Highlight the symbol under point with `auto-highlight-symbol'."
+  (interactive)
+  (spacemacs/ahs-highlight-now-wrapper)
+  (setq spacemacs-last-ahs-highlight-p (ahs-highlight-p))
+  (spacemacs/symbol-highlight-transient-state/body)
+  (spacemacs/integrate-evil-search nil))
 
-;; (defun spacemacs//ahs-ms-on-exit ()
-;;   ;; Restore user search direction state as ahs has exitted in a state
-;;   ;; good for <C-s>, but not for 'n' and 'N'"
-;;   (setq isearch-forward spacemacs--ahs-searching-forward))
+(defun spacemacs//ahs-ms-on-exit ()
+  ;; Restore user search direction state as ahs has exitted in a state
+  ;; good for <C-s>, but not for 'n' and 'N'"
+  (setq isearch-forward spacemacs--ahs-searching-forward))
 
-;; (defun spacemacs/symbol-highlight-reset-range ()
-;;   "Reset the range for `auto-highlight-symbol'."
-;;   (interactive)
-;;   (ahs-change-range ahs-default-range))
+(defun spacemacs/symbol-highlight-reset-range ()
+  "Reset the range for `auto-highlight-symbol'."
+  (interactive)
+  (ahs-change-range ahs-default-range))
 
 ;; transient state
-;; (defun spacemacs//symbol-highlight-doc ()
-;;         (let* ((i 0)
-;;                (overlay-count (length ahs-overlay-list))
-;;                (overlay (format "%s" (nth i ahs-overlay-list)))
-;;                (current-overlay (format "%s" ahs-current-overlay))
-;;                (st (ahs-stat))
-;;                (plighter (ahs-current-plugin-prop 'lighter))
-;;                (plugin (format "%s"
-;;                                (cond ((string= plighter "HS")  "Display")
-;;                                      ((string= plighter "HSA") "Buffer")
-;;                                      ((string= plighter "HSD") "Function"))))
-;;                (face (cond ((string= plighter "HS")  ahs-plugin-defalt-face)
-;;                            ((string= plighter "HSA") ahs-plugin-whole-buffer-face)
-;;                            ((string= plighter "HSD") ahs-plugin-bod-face))))
-;;           (while (not (string= overlay current-overlay))
-;;             (setq i (1+ i))
-;;             (setq overlay (format "%s" (nth i ahs-overlay-list))))
-;;           (let* ((x/y (format "[%s/%s]" (- overlay-count i) overlay-count))
-;;                  (hidden (if (< 0 (- overlay-count (nth 4 st))) "*" "")))
-;;             (concat
-;;              (propertize (format " %s " plugin) 'face face)
-;;              (propertize (format " %s%s " x/y hidden) 'face
-;;                          `(:foreground "#ffffff" :background "#000000"))))))
+(defun spacemacs//symbol-highlight-doc ()
+        (let* ((i 0)
+               (overlay-count (length ahs-overlay-list))
+               (overlay (format "%s" (nth i ahs-overlay-list)))
+               (current-overlay (format "%s" ahs-current-overlay))
+               (st (ahs-stat))
+               (plighter (ahs-current-plugin-prop 'lighter))
+               (plugin (format "%s"
+                               (cond ((string= plighter "HS")  "Display")
+                                     ((string= plighter "HSA") "Buffer")
+                                     ((string= plighter "HSD") "Function"))))
+               (face (cond ((string= plighter "HS")  ahs-plugin-defalt-face)
+                           ((string= plighter "HSA") ahs-plugin-whole-buffer-face)
+                           ((string= plighter "HSD") ahs-plugin-bod-face))))
+          (while (not (string= overlay current-overlay))
+            (setq i (1+ i))
+            (setq overlay (format "%s" (nth i ahs-overlay-list))))
+          (let* ((x/y (format "[%s/%s]" (- overlay-count i) overlay-count))
+                 (hidden (if (< 0 (- overlay-count (nth 4 st))) "*" "")))
+            (concat
+             (propertize (format " %s " plugin) 'face face)
+             (propertize (format " %s%s " x/y hidden) 'face
+                         `(:foreground "#ffffff" :background "#000000"))))))
 
-;; (defun spacemacs/ahs-to-iedit ()
-;;   "Trigger iedit from ahs."
-;;   (interactive)
-;;   (cond
-;;    ((and (not (eq dotspacemacs-editing-style 'emacs))
-;;          (configuration-layer/package-used-p 'evil-iedit-state))
-;;     (evil-iedit-state/iedit-mode)
-;;     (iedit-restrict-region (ahs-current-plugin-prop 'start)
-;;                            (ahs-current-plugin-prop 'end)))
-;;    ((and (eq dotspacemacs-editing-style 'emacs)
-;;          (configuration-layer/package-used-p 'iedit))
-;;     (iedit-mode)
-;;     (iedit-restrict-region (ahs-current-plugin-prop 'start)
-;;                            (ahs-current-plugin-prop 'end)))
-;;    (t (ahs-edit-mode t))))
+(defun spacemacs/ahs-to-iedit ()
+  "Trigger iedit from ahs."
+  (interactive)
+  (cond
+   ((and (not (eq dotspacemacs-editing-style 'emacs))
+         (configuration-layer/package-used-p 'evil-iedit-state))
+    (evil-iedit-state/iedit-mode)
+    (iedit-restrict-region (ahs-current-plugin-prop 'start)
+                           (ahs-current-plugin-prop 'end)))
+   ((and (eq dotspacemacs-editing-style 'emacs)
+         (configuration-layer/package-used-p 'iedit))
+    (iedit-mode)
+    (iedit-restrict-region (ahs-current-plugin-prop 'start)
+                           (ahs-current-plugin-prop 'end)))
+   (t (ahs-edit-mode t))))
 
-;; (defun spacemacs//symbol-highlight-ts-doc ()
-;;   (spacemacs//transient-state-make-doc
-;;    'symbol-highlight
-;;    (format spacemacs--symbol-highlight-transient-state-doc
-;;            (spacemacs//symbol-highlight-doc)
-;;            (make-string (length (spacemacs//symbol-highlight-doc)) 32))))
+(defun spacemacs//symbol-highlight-ts-doc ()
+  (spacemacs//transient-state-make-doc
+   'symbol-highlight
+   (format spacemacs--symbol-highlight-transient-state-doc
+           (spacemacs//symbol-highlight-doc)
+           (make-string (length (spacemacs//symbol-highlight-doc)) 32))))
 
 
 ;; golden ratio
 
-;; (defun spacemacs/no-golden-ratio-for-buffers (bufname)
-;;   "Disable golden-ratio if BUFNAME is the name of a visible buffer."
-;;   (and (get-buffer bufname) (get-buffer-window bufname 'visible)))
+(defun spacemacs/no-golden-ratio-for-buffers (bufname)
+  "Disable golden-ratio if BUFNAME is the name of a visible buffer."
+  (and (get-buffer bufname) (get-buffer-window bufname 'visible)))
 
-;; (defun spacemacs/no-golden-ratio-guide-key ()
-;;   "Disable golden-ratio for guide-key popwin buffer."
-;;   (or (spacemacs/no-golden-ratio-for-buffers " *guide-key*")
-;;       (spacemacs/no-golden-ratio-for-buffers " *popwin-dummy*")))
+(defun spacemacs/no-golden-ratio-guide-key ()
+  "Disable golden-ratio for guide-key popwin buffer."
+  (or (spacemacs/no-golden-ratio-for-buffers " *guide-key*")
+      (spacemacs/no-golden-ratio-for-buffers " *popwin-dummy*")))
 
 
 ;; smooth scrolling

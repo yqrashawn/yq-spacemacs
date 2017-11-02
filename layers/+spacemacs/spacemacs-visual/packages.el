@@ -12,7 +12,7 @@
 (setq spacemacs-visual-packages
       '(
         (ansi-colors :location built-in)
-        ;; desktop
+        desktop
         fill-column-indicator
         hl-todo
         popup
@@ -24,13 +24,13 @@
   (add-hook 'compilation-filter-hook
             'spacemacs-visual//compilation-buffer-apply-ansi-colors))
 
-;; (defun spacemacs-visual/init-desktop ()
-;;   (use-package desktop
-;;     :defer t
-;;     :init
-;;     (setq desktop-dirname spacemacs-cache-directory)
-;;     :config
-;;     (push spacemacs-cache-directory desktop-path)))
+(defun spacemacs-visual/init-desktop ()
+  (use-package desktop
+    :defer t
+    :init
+    (setq desktop-dirname spacemacs-cache-directory)
+    :config
+    (push spacemacs-cache-directory desktop-path)))
 
 (defun spacemacs-visual/init-fill-column-indicator ()
   (use-package fill-column-indicator

@@ -11,8 +11,7 @@
 
 (setq spacemacs-layouts-packages
       '(eyebrowse
-        ;; persp-fr
-        ;; helm
+        helm
         ivy
         persp-mode
         ;; spaceline
@@ -36,9 +35,11 @@
  [_0_.._9_]^^     nth/new workspace  [_d_] close current workspace
  [_C-0_.._C-9_]^^ nth/new workspace  [_R_] rename current workspace
  [_<tab>_]^^^^    last workspace     [_?_] toggle help\n
+ [_c_/_C_]^^      create workspace
  [_l_]^^^^        layouts
  [_n_/_C-l_]^^    next workspace
- [_N_/_p_/_C-h_]  prev workspace\n")
+ [_N_/_p_/_C-h_]  prev workspace\n
+ [_w_]^^^^       workspace w/helm/ivy\n")
 
       (spacemacs|define-transient-state workspaces
         :title "Workspaces Transient State"
@@ -67,6 +68,11 @@
         ("C-8" eyebrowse-switch-to-window-config-8)
         ("C-9" eyebrowse-switch-to-window-config-9)
         ("<tab>" eyebrowse-last-window-config)
+        ("<return>" nil :exit t)
+        ("TAB" eyebrowse-last-window-config)
+        ("RET" nil :exit t)
+        ("c" eyebrowse-create-window-config :exit t)
+        ("C" eyebrowse-create-window-config)
         ("C-h" eyebrowse-prev-window-config)
         ("C-i" eyebrowse-last-window-config)
         ("C-l" eyebrowse-next-window-config)
@@ -95,17 +101,18 @@
 
 
 
-;; (defun spacemacs-layouts/post-init-helm ()
-;;   (spacemacs/set-leader-keys
-;;     "Bb" 'spacemacs-layouts/non-restricted-buffer-list-helm
-;;     "pl" 'spacemacs/helm-persp-switch-project))
+(defun spacemacs-layouts/post-init-helm ()
+  (spacemacs/set-leader-keys
+    "bB" 'spacemacs-layouts/non-restricted-buffer-list-helm
+    "pl" 'spacemacs/helm-persp-switch-project))
 
 
 
 (defun spacemacs-layouts/post-init-ivy ()
   (spacemacs/set-leader-keys
-    "Bb" 'spacemacs-layouts/non-restricted-buffer-list-ivy))
-
+    "bB" 'spacemacs-layouts/non-restricted-buffer-list-ivy))
+
+ 
 
 (defun spacemacs-layouts/init-persp-mode ()
   (use-package persp-mode
@@ -113,7 +120,8 @@
     (progn
       (setq persp-auto-resume-time (if (or dotspacemacs-auto-resume-layouts
                                            spacemacs-force-resume-layouts)
-                                       0.3 -1)
+                                       1 -1)
+            persp-is-ibc-as-f-supported nil
             persp-nil-name dotspacemacs-default-layout-name
             persp-reset-windows-on-nil-window-conf nil
             persp-set-last-persp-for-new-frames nil
@@ -307,18 +315,20 @@
         ("C-0" spacemacs/persp-switch-to-0)
         ("<tab>" spacemacs/jump-to-last-layout)
         ("<return>" nil :exit t)
+        ("TAB" spacemacs/jump-to-last-layout)
+        ("RET" nil :exit t)
         ("C-h" persp-prev)
         ("C-l" persp-next)
         ("<" spacemacs/move-current-persp-left)
         (">" spacemacs/move-current-persp-right)
         ("a" persp-add-buffer :exit t)
         ("A" persp-import-buffers :exit t)
-        ("b" spacemacs/ivy-spacemacs-layout-buffer :exit t)
+        ("b" spacemacs/persp-buffers :exit t)
         ("d" spacemacs/layouts-ts-close)
         ("D" spacemacs/layouts-ts-close-other :exit t)
         ("h" spacemacs/layout-goto-default :exit t)
-        ("l" spacemacs/ivy-spacemacs-layouts :exit t)
         ("L" persp-load-state-from-file :exit t)
+        ("l" spacemacs/persp-perspectives :exit t)
         ("n" persp-next)
         ("N" persp-prev)
         ("o" spacemacs/select-custom-layout :exit t)
@@ -344,10 +354,8 @@
         (setq spacemacs--last-selected-layout persp-last-persp-name))
       (add-hook 'persp-mode-hook 'spacemacs//layout-autosave)
       (spacemacs/declare-prefix "b" "persp-buffers")
-      (spacemacs/declare-prefix "B" "global-buffers")
       ;; Override SPC TAB to only change buffers in perspective
       (spacemacs/set-leader-keys
-        "TAB"  'spacemacs/alternate-buffer-in-persp
         "ba"   'persp-add-buffer
         "br"   'persp-remove-buffer))))
 
@@ -361,7 +369,3 @@
 
 (defun spacemacs-layouts/post-init-swiper ()
   (spacemacs/set-leader-keys "pl" 'spacemacs/ivy-persp-switch-project))
-
-
-;; (defun spacemacs-layouts/init-persp-fr ()
-  ;; (persp-fr-start))
