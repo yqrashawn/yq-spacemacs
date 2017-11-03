@@ -23,7 +23,7 @@
         ;; impatient-mode
         ;; less-css-mode
         ;; pug-mode
-        ;; sass-mode
+        sass-mode
         ;; scss-mode
         ;; slim-mode
         smartparens
@@ -131,7 +131,7 @@
                   ;; haml-mode
                   ;; less-mode
                   ;; pug-mode
-                  ;; sass-mode
+                  sass-mode
                   ;; scss-mode
                   ;; slim-mode
                   web-mode))
@@ -166,10 +166,10 @@
 ;;     :defer t
 ;;     :mode ("\\.pug$" . pug-mode)))
 
-;; (defun html/init-sass-mode ()
-;;   (use-package sass-mode
-;;     :defer t
-;;     :mode ("\\.sass\\'" . sass-mode)))
+(defun html/init-sass-mode ()
+  (use-package sass-mode
+    :defer t
+    :mode ("\\.sass\\'" . sass-mode)))
 
 ;; (defun html/init-scss-mode ()
 ;;   (use-package scss-mode
