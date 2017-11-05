@@ -30,6 +30,7 @@
         (org-mime :location built-in)
         org-pomodoro
         org-present
+        org-preview-html
         (org-projectile :requires projectile)
         (ox-twbs :toggle org-enable-bootstrap-support)
         ;; use a for of ox-gfm to fix index generation
@@ -76,6 +77,10 @@
 
 (defun org/init-htmlize ()
   (use-package htmlize
+    :defer t))
+
+(defun org/init-org-preview-html ()
+  (use-package org-preview-html
     :defer t))
 
 (defun org/init-ob ()

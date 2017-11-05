@@ -35,32 +35,12 @@
                              :repo "codefalling/vue-mode"))
         ))
 
-(defun javascript/init-prettier-js ()
-  (use-package prettier-js
-    :mode (("\\.js\\'" . js2-mode) ("\\.ts\\'" . typescript-mode) ("\\.html\\'" . web-mode) ("\\.jsx\\'" . react-mode))
-    :commands prettier-js-mode
-    :defer t
-    :config
-    (progn
-      (prettier-js-mode)
-      ;; (add-hook 'js2-mode-hook 'prettier-js-mode)
-      ;; (add-hook 'typescript-mode-hook 'prettier-js-mode)
-      ;; (add-hook 'react-mode-hook 'prettier-js-mode)
-      (defun enable-minor-mode (my-pair)
-        "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
-        (if (buffer-file-name)
-            (if (string-match (car my-pair) buffer-file-name)
-                (funcall (cdr my-pair)))))
-      (add-hook 'web-mode-hook #'(lambda ()
-                                   (enable-minor-mode
-                                    '("\\.jsx?\\'" . prettier-js-mode))))
-      )))
 
 (defun javascript/init-vue-mode ()
   (use-package vue-mode))
 
 ;; (defun javascript/post-init-company ()
-  ;; (spacemacs|add-company-hook js2-mode))
+;; (spacemacs|add-company-hook js2-mode))
 
 (defun javascript/post-init-add-node-modules-path ()
   (add-hook 'css-mode-hook #'add-node-modules-path)
@@ -234,14 +214,15 @@
     :defer t
     :init
     (progn
-      (spacemacs/set-leader-keys-for-major-mode 'js2-mode
-        "=" 'web-beautify-js)
+      ;; (spacemacs/set-leader-keys-for-major-mode 'js2-mode
+      ;;   "=" 'web-beautify-js)
       (spacemacs/set-leader-keys-for-major-mode 'json-mode
         "=" 'web-beautify-js)
       (spacemacs/set-leader-keys-for-major-mode 'web-mode
         "=" 'web-beautify-html)
-      (spacemacs/set-leader-keys-for-major-mode 'css-mode
-        "=" 'web-beautify-css))))
+      ;; (spacemacs/set-leader-keys-for-major-mode 'css-mode
+      ;; "=" 'web-beautify-css)
+      )))
 
 (defun javascript/init-skewer-mode ()
   (use-package skewer-mode
@@ -277,3 +258,12 @@
             :mode livid-mode
             :documentation "Live evaluation of JS buffer change."
             :evil-leader-for-mode (js2-mode . "sa"))))
+
+(defun javascript/init-prettier-js ()
+  (use-package prettier-js
+    :mode (("\\.js\\'" . js2-mode) ("\\.html\\'" . web-mode) ("\\.jsx\\'" . react-mode))
+    :commands prettier-js-mode
+    :defer
+    :config
+    (progn (spacemacs/set-leader-keys-for-major-mode 'css-mode "=" 'prettier-js)
+           (spacemacs/set-leader-keys-for-major-mode 'js2-mode "=" 'prettier-js))))
