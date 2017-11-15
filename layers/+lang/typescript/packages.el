@@ -27,7 +27,7 @@
 (defun typescript/post-init-company ()
   (spacemacs|add-company-backends
     :backends company-tide
-    :modes typescript-mode web-mode))
+    :modes typescript-mode web-mode js2-mode))
 
 (defun typescript/post-init-eldoc ()
   (add-hook 'typescript-mode-hook 'eldoc-mode)
@@ -48,6 +48,9 @@
         (kbd "C-j") 'tide-find-next-reference
         (kbd "C-l") 'tide-goto-reference)
       (add-hook 'typescript-mode-hook 'tide-setup)
+      (add-hook 'js2-mode-hook 'tide-setup)
+      (add-to-list 'spacemacs-jump-handlers-js2-mode
+                   '(tide-jump-to-definition :async t))
       (add-to-list 'spacemacs-jump-handlers-typescript-mode
                    '(tide-jump-to-definition :async t)))
     :config
