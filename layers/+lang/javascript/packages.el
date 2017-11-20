@@ -262,8 +262,8 @@
 (defun javascript/init-prettier-js ()
   (use-package prettier-js
     :mode (("\\.js\\'" . js2-mode) ("\\.html\\'" . web-mode) ("\\.jsx\\'" . react-mode))
-    :commands prettier-js-mode
+    :commands (prettier-js-mode prettier-js)
     :defer
-    :config
+    :init
     (progn (spacemacs/set-leader-keys-for-major-mode 'css-mode "=" 'prettier-js)
            (spacemacs/set-leader-keys-for-major-mode 'js2-mode "=" 'prettier-js))))
