@@ -89,7 +89,6 @@
         "eh" 'flycheck-describe-checker
         "el" 'spacemacs/toggle-flycheck-error-list
         "eL" 'spacemacs/goto-flycheck-error-list
-        "ee" 'flycheck-explain-error-at-point
         "es" 'flycheck-select-checker
         "eS" 'flycheck-set-checker-executable
         "ev" 'flycheck-verify-setup

@@ -127,9 +127,8 @@
       (spacemacs/set-leader-keys
         "gb"  'spacemacs/git-blame-micro-state
         "gc"  'magit-clone
-        "gf"  'magit-file-popup
-        ;; "gff" 'magit-find-file
-        ;; "gfh" 'magit-log-buffer-file
+        "gff" 'magit-find-file
+        "gfh" 'magit-log-buffer-file
         "gi"  'magit-init
         "gL"  'magit-list-repositories
         "gm"  'magit-dispatch-popup

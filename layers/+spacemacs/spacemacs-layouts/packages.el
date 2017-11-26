@@ -14,7 +14,6 @@
         helm
         ivy
         persp-mode
-        ;; spaceline
         swiper))
 
 
@@ -74,7 +73,6 @@
         ("c" eyebrowse-create-window-config :exit t)
         ("C" eyebrowse-create-window-config)
         ("C-h" eyebrowse-prev-window-config)
-        ("C-i" eyebrowse-last-window-config)
         ("C-l" eyebrowse-next-window-config)
         ("d" eyebrowse-close-window-config)
         ("l" spacemacs/layouts-transient-state/body :exit t)
@@ -126,137 +124,7 @@
             persp-reset-windows-on-nil-window-conf nil
             persp-set-last-persp-for-new-frames nil
             persp-save-dir spacemacs-layouts-directory
-            persp-auto-save-persps-to-their-file-before-kill t
-            persp-auto-save-num-of-backups 100
-            persp-hook-up-emacs-buffer-completion t ;; try to restrict buffer list
-            persp-set-read-buffer-function t ;; read buffer func to persp-read-buffre
-            persp-interactive-completion-system 'ivy-completing-read
-            persp-remove-buffers-from-nil-persp-behaviour nil
-            persp-autokill-buffer-on-remove 'kill
-            persp-kill-foreign-buffer-behaviour 'kill
-            ;; persp-common-buffer-filter-functions ;; need to add projectile here
-            ;; persp-filter-save-buffers-functions ;; "Additional filters to not save unneeded buffers."
             persp-set-ido-hooks t)
-
-      (global-set-key (kbd "C-x b") #'(lambda (arg)
-                                        (interactive "P")
-                                        (with-persp-buffer-list () (ibuffer arg))))
-
-      ;; mru
-      ;; (with-eval-after-load "persp-mode"
-      ;;   (add-hook 'persp-before-switch-functions
-      ;;             #'(lambda (new-persp-name w-or-f)
-      ;;                 (let ((cur-persp-name (safe-persp-name (get-current-persp))))
-      ;;                   (when (member cur-persp-name persp-names-cache)
-      ;;                     (setq persp-names-cache
-      ;;                           (cons cur-persp-name
-      ;;                                 (delete cur-persp-name persp-names-cache)))))))
-
-      ;;   (add-hook 'persp-renamed-functions
-      ;;             #'(lambda (persp old-name new-name)
-      ;;                 (setq persp-names-cache
-      ;;                       (cons new-name (delete old-name persp-names-cache)))))
-
-      ;;   (add-hook 'persp-before-kill-functions
-      ;;             #'(lambda (persp)
-      ;;                 (setq persp-names-cache
-      ;;                       (delete (safe-persp-name persp) persp-names-cache))))
-
-      ;;   (add-hook 'persp-created-functions
-      ;;             #'(lambda (persp phash)
-      ;;                 (when (and (eq phash *persp-hash*)
-      ;;                            (not (member (safe-persp-name persp)
-      ;;                                         persp-names-cache)))
-      ;;                   (setq persp-names-cache
-      ;;                         (cons (safe-persp-name persp) persp-names-cache))))))
-
-      ;; ivy
-      (with-eval-after-load "persp-mode"
-        (with-eval-after-load "ivy"
-          (add-hook 'ivy-ignore-buffers
-                    #'(lambda (b)
-                        (when persp-mode
-                          (let ((persp (get-current-persp)))
-                            (if persp
-                                (not (persp-contain-buffer-p b persp))
-                              nil)))))
-
-          (setq ivy-sort-functions-alist
-                (append ivy-sort-functions-alist
-                        '((persp-kill-buffer   . nil)
-                          (persp-remove-buffer . nil)
-                          (persp-add-buffer    . nil)
-                          (persp-switch        . nil)
-                          (persp-window-switch . nil)
-                          (persp-frame-switch  . nil))))))
-
-      ;; ibuffer
-      ;; Simplified variant. Add only current perspective group.
-      (with-eval-after-load "ibuffer"
-
-        (require 'ibuf-ext)
-
-        (define-ibuffer-filter persp
-            "Toggle current view to buffers of current perspective."
-          (:description "persp-mode"
-                        :reader (persp-prompt nil nil (safe-persp-name (get-frame-persp)) t))
-          (find buf (safe-persp-buffers (persp-get-by-name qualifier))))
-
-        (defun persp-add-ibuffer-group ()
-          (let ((perspslist (list (safe-persp-name (get-frame-persp))
-                                  (cons 'persp (safe-persp-name (get-frame-persp))))))
-            (setq ibuffer-saved-filter-groups
-                  (delete* "persp-mode" ibuffer-saved-filter-groups
-                           :test 'string= :key 'car))
-            (push
-             (cons "persp-mode" perspslist)
-             ibuffer-saved-filter-groups)))
-
-        (add-hook 'ibuffer-mode-hook
-                  #'(lambda ()
-                      (persp-add-ibuffer-group)
-                      (ibuffer-switch-to-saved-filter-groups "persp-mode"))))
-
-
-      ;; Shows groups for all perspectives. But can't show same buffer in multiple groups.
-      (with-eval-after-load "ibuffer"
-        (require 'ibuf-ext)
-
-        (define-ibuffer-filter persp
-            "Toggle current view to buffers of current perspective."
-          (:description "persp-mode"
-                        :reader (persp-prompt nil nil (safe-persp-name (get-frame-persp)) t))
-          (find buf (safe-persp-buffers (persp-get-by-name qualifier))))
-
-        (defun persp-add-ibuffer-group ()
-          (let ((perspslist (mapcar #'(lambda (pn)
-                                        (list pn (cons 'persp pn)))
-                                    (nconc
-                                     (delete* persp-nil-name
-                                              (persp-names-current-frame-fast-ordered)
-                                              :test 'string=)
-                                     (list persp-nil-name)))))
-            (setq ibuffer-saved-filter-groups
-                  (delete* "persp-mode" ibuffer-saved-filter-groups
-                           :test 'string= :key 'car))
-            (push
-             (cons "persp-mode" perspslist)
-             ibuffer-saved-filter-groups)))
-
-        (defun persp-ibuffer-visit-buffer ()
-          (let ((buf (ibuffer-current-buffer t))
-                (persp-name (get-text-property
-                             (line-beginning-position) 'ibuffer-filter-group)))
-            (persp-switch persp-name)
-            (switch-to-buffer buf)))
-
-        (define-key ibuffer-mode-map (kbd "RET") 'persp-ibuffer-visit-buffer)
-
-        (add-hook 'ibuffer-mode-hook
-                  #'(lambda ()
-                      (persp-add-ibuffer-group)
-                      (ibuffer-switch-to-saved-filter-groups "persp-mode"))))
-
 
       (defun spacemacs//activate-persp-mode ()
         "Always activate persp-mode, unless it is already active.
@@ -360,10 +228,6 @@
         "br"   'persp-remove-buffer))))
 
 
-
-;; (defun spacemacs-layouts/post-init-spaceline ()
-;;   (setq spaceline-display-default-perspective
-;;         dotspacemacs-display-default-layout))
 
 
 

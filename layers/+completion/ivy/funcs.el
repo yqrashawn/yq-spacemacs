@@ -274,6 +274,7 @@ that directory."
   (with-eval-after-load 'counsel
     (defun spacemacs/describe-mode ()
       "Dummy wrapper to prevent an key binding error from helm.
+
 By default the emacs leader is M-m, turns out that Helm does this:
    (cl-dolist (k (where-is-internal 'describe-mode global-map))
         (define-key map k 'helm-help))
@@ -281,6 +282,7 @@ after doing this:
    (define-key map (kbd \"M-m\") 'helm-toggle-all-marks)
 So when Helm is loaded we get the error:
    Key sequence M-m h d m starts with non-prefix key M-m
+
 To prevent this error we just wrap `describe-mode' to defeat the
  Helm hack."
       (interactive)
@@ -348,8 +350,10 @@ If match is found
 \(default) Select layout
 c: Close Layout(s) <- mark with C-SPC to close more than one-window
 k: Kill Layout(s)
+
 If match is not found
 <enter> Creates layout
+
 Closing doesn't kill buffers inside the layout while killing layouts does."
   (interactive)
   (ivy-read "Layouts: "

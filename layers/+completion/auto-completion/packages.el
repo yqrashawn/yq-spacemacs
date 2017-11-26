@@ -147,7 +147,7 @@
 (defun auto-completion/init-hippie-exp ()
   ;; replace dabbrev-expand
   (global-set-key (kbd "M-/") 'hippie-expand)
-  (evil-global-set-key 'insert (kbd "C-l") 'hippie-expand)
+  ;; (evil-global-set-key 'insert (kbd "C-l") 'hippie-expand)
   (define-key evil-insert-state-map [remap evil-complete-previous] 'hippie-expand)
   (setq hippie-expand-try-functions-list
         '(

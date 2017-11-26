@@ -81,10 +81,10 @@
             :backends company-tern
             :modes js2-mode)))
 
-;; (defun javascript/post-init-company ()
-;;   (spacemacs|add-company-backends
-;;     :backends company-capf
-;;     :modes coffee-mode))
+(defun javascript/post-init-company ()
+  (spacemacs|add-company-backends
+    :backends company-capf
+    :modes coffee-mode))
 
 (defun javascript/post-init-flycheck ()
   (dolist (mode '(js2-mode json-mode))

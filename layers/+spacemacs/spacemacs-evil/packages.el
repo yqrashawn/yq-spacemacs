@@ -124,7 +124,7 @@
       ;; evil-mc is not compatible with the paste transient state
       (define-key evil-normal-state-map "p" 'spacemacs/evil-mc-paste-after)
       (define-key evil-normal-state-map "P" 'spacemacs/evil-mc-paste-before)
-      (setq evil-mc-one-cursor-show-mode-line-text t))))
+      (setq evil-mc-one-cursor-show-mode-line-text nil))))
 
 ;; other commenting functions in funcs.el with keybinds in keybindings.el
 (defun spacemacs-evil/init-evil-nerd-commenter ()
@@ -216,7 +216,6 @@
     (progn
       (global-evil-search-highlight-persist)
       ;; (set-face-attribute )
-      (setq evil-search-highlight-string-min-len 3)
       (spacemacs/set-leader-keys "sc" 'spacemacs/evil-search-clear-highlight)
       (define-key evil-search-highlight-persist-map (kbd "C-x SPC") 'rectangle-mark-mode)
       (evil-ex-define-cmd "nohlsearch"

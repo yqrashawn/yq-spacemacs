@@ -50,7 +50,6 @@
         dotspacemacs-emacs-command-key 'counsel-M-x
         ;; files
         "ff"  'counsel-find-file
-        "fF"  'find-file-other-window
         "fel" 'counsel-find-library
         "fL"  'counsel-locate
         ;; help
