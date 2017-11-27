@@ -19,6 +19,9 @@
         ("https" . "127.0.0.1:6152")))
 (setq gc-cons-threshold 100000000)
 
+;; (load-file "~/.emacs.d/core/core-versions.el")
+;; (load-file "~/.emacs.d/core/core-load-paths.el")
+
 (load-file (concat (file-name-directory load-file-name)
                    "core/core-versions.el"))
 (load-file (concat (file-name-directory load-file-name)
