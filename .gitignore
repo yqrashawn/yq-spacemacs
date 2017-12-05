@@ -59,3 +59,5 @@ layouts
 saveplace
 SessionDesktop.el
 /indium-workspaces.el
+/smex-items
+/magithub
