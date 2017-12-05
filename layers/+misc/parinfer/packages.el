@@ -25,6 +25,9 @@
         :status (eq parinfer--mode 'indent)
         :on (parinfer-toggle-mode)
         :off (parinfer-toggle-mode))
-      (setq parinfer-extensions '(defaults pretty-parens evil smart-yank)))))
+      (setq parinfer-extensions '(defaults pretty-parens evil smart-yank)))
+    :config
+      (define-key parinfer-mode-map (kbd "C-,") 'parinfer-toggle-mode)))
+
 
 ;;; packages.el ends here

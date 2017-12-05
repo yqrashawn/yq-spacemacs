@@ -30,17 +30,35 @@
         web-beautify
         skewer-mode
         livid-mode
+        lsp-mode
         (vue-mode :location (recipe
                              :fetcher github
-                             :repo "codefalling/vue-mode"))
-        ))
+                             :repo "codefalling/vue-mode"))))
 
+(defun javascript/init-lsp-mode ()
+  (use-package lsp-mode
+    :defer t
+    :init (add-hook 'vue-mode-hook 'lsp-mode)
+    :config (spacemacs|hide-lighter lsp-mode)))
 
 (defun javascript/init-vue-mode ()
-  (use-package vue-mode))
+  (use-package vue-mode
+    :defer t
+    :mode (("\\.vue\\'" . vue-mode))
+    :init (progn
+            (spacemacs|add-company-backends
+              :backends company-lsp
+              :modes vue-mode)
+            (add-hook 'vue-mode-hook #'lsp-vue-mmm-enable)
+            (add-hook 'vue-mode-hook 'hs-minor-mode)
+            (add-hook 'vue-mode-hook 'smartparens-mode))
 
-;; (defun javascript/post-init-company ()
-;; (spacemacs|add-company-hook js2-mode))
+    :config (progn
+              (push 'company-lsp company-backends)
+              (with-eval-after-load 'lsp-mode
+                (require 'lsp-flycheck))
+              (require 'lsp-mode)
+              (require 'lsp-vue))))
 
 (defun javascript/post-init-add-node-modules-path ()
   (add-hook 'css-mode-hook #'add-node-modules-path)
@@ -219,10 +237,10 @@
       (spacemacs/set-leader-keys-for-major-mode 'json-mode
         "=" 'web-beautify-js)
       (spacemacs/set-leader-keys-for-major-mode 'web-mode
-        "=" 'web-beautify-html)
+        "=" 'web-beautify-html))))
       ;; (spacemacs/set-leader-keys-for-major-mode 'css-mode
       ;; "=" 'web-beautify-css)
-      )))
+
 
 (defun javascript/init-skewer-mode ()
   (use-package skewer-mode
@@ -263,7 +281,7 @@
   (use-package prettier-js
     :mode (("\\.js\\'" . js2-mode) ("\\.html\\'" . web-mode) ("\\.jsx\\'" . react-mode))
     :commands (prettier-js-mode prettier-js)
-    :defer
+    :defer t
     :init
     (progn (spacemacs/set-leader-keys-for-major-mode 'css-mode "=" 'prettier-js)
            (spacemacs/set-leader-keys-for-major-mode 'js2-mode "=" 'prettier-js))))
