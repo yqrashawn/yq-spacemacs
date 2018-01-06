@@ -1,6 +1,6 @@
 ;;; packages.el --- Javascript Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2017 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -242,8 +242,8 @@
         "=" 'web-beautify-js)
       (spacemacs/set-leader-keys-for-major-mode 'web-mode
         "=" 'web-beautify-html))))
-      ;; (spacemacs/set-leader-keys-for-major-mode 'css-mode
-      ;; "=" 'web-beautify-css)
+;; (spacemacs/set-leader-keys-for-major-mode 'css-mode
+;; "=" 'web-beautify-css)
 
 
 (defun javascript/init-skewer-mode ()
@@ -276,10 +276,13 @@
 (defun javascript/init-livid-mode ()
   (use-package livid-mode
     :defer t
-    :init (spacemacs|add-toggle javascript-repl-live-evaluation
-            :mode livid-mode
-            :documentation "Live evaluation of JS buffer change."
-            :evil-leader-for-mode (js2-mode . "sa"))))
+    :init
+    (progn
+      (spacemacs|add-toggle javascript-repl-live-evaluation
+        :mode livid-mode
+        :documentation "Live evaluation of JS buffer change."
+        :evil-leader-for-mode (js2-mode . "Tl"))
+      (spacemacs|diminish livid-mode " 🅻" " [l]"))))
 
 (defun javascript/init-prettier-js ()
   (use-package prettier-js

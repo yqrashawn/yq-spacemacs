@@ -1,4 +1,4 @@
-;;; keybindings.el --- Better Emacs Defaults Layer key bindings File
+;;; config.el --- Spacemacs-evil Layer Configuration File for Spacemacs
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
@@ -9,4 +9,6 @@
 ;;
 ;;; License: GPLv3
 
-(global-set-key (kbd "C-w") 'spacemacs/backward-kill-word-or-region)
+
+(defvar evil-lisp-safe-structural-editing-modes '()
+  "A list of major mode symbols where safe structural editing is supported.")

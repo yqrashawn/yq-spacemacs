@@ -1,6 +1,6 @@
 ;;; packages.el --- Clojure Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2017 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -19,6 +19,7 @@
         (clojure-snippets :toggle (configuration-layer/layer-used-p 'auto-completion))
         company
         eldoc
+        evil-cleverparens
         ggtags
         counsel-gtags
         helm-gtags
@@ -309,6 +310,11 @@
   (add-hook 'cider-mode-hook 'eldoc-mode)
   (add-hook 'cider-repl-mode-hook 'eldoc-mode)
   (add-hook 'cider-clojure-interaction-mode-hook 'eldoc-mode))
+
+(defun clojure/pre-init-evil-cleverparens ()
+  (spacemacs|use-package-add-hook evil-cleverparens
+    :pre-init
+    (add-to-list 'evil-lisp-safe-structural-editing-modes 'clojure-mode)))
 
 (defun clojure/pre-init-popwin ()
   (spacemacs|use-package-add-hook popwin

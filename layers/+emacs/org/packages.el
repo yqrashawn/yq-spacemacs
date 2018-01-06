@@ -1,6 +1,6 @@
 ;;; packages.el --- Org Layer packages File for Spacemacs
 ;;
-;; Copyright (c) 2012-2017 Sylvain Benner & Contributors
+;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
 ;; Author: Sylvain Benner <sylvain.benner@gmail.com>
 ;; URL: https://github.com/syl20bnr/spacemacs
@@ -60,7 +60,7 @@
                                  additional
                                  ,@(when org-want-todo-bindings '(todo)))))
     :config
-    (spacemacs|diminish evil-org-mode " ⓔ" " e")))
+    (spacemacs|hide-lighter evil-org-mode)))
 
 (defun org/post-init-evil-surround ()
   (defun spacemacs/add-org-surrounds ()
