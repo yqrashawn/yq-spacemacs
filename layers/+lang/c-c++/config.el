@@ -28,6 +28,9 @@
   "If non-nil `google-make-newline-indent' will be added as as
   `c-mode-common-hook'.")
 
+(defvar c-c++-enable-rtags-support nil
+  "If non nil Rtags related packages and configuration are enabled.")
+
 (defvar c-c++-enable-cmake-ide-support nil
   "If non nil CMake related packages and configuration are enabled.")
 
