@@ -143,6 +143,7 @@
       (spacemacs/declare-prefix-for-mode 'js2-mode "mz" "folding")
       ;; key bindings
       (spacemacs/set-leader-keys-for-major-mode 'js2-mode
+        "m" 'rjsx-mode
         "w" 'js2-mode-toggle-warnings-and-errors
         "zc" 'js2-mode-hide-element
         "zo" 'js2-mode-show-element
@@ -286,7 +287,7 @@
 
 (defun javascript/init-prettier-js ()
   (use-package prettier-js
-    :mode (("\\.js\\'" . js2-mode) ("\\.html\\'" . web-mode) ("\\.jsx\\'" . react-mode))
+    :mode (("\\.js\\'" . js2-mode) ("\\.html\\'" . web-mode))
     :commands (prettier-js-mode prettier-js)
     :defer t
     :init
