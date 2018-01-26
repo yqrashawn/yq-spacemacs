@@ -193,6 +193,7 @@
 
       (define-key evil-normal-state-map "gc" 'evilnc-comment-operator)
       (define-key evil-normal-state-map "gy" 'spacemacs/copy-and-comment-lines)
+      (define-key evil-visual-state-map (kbd "C-x C-;") 'evilnc-comment-or-uncomment-lines)
 
       (spacemacs/set-leader-keys
         ";"  'evilnc-comment-operator
