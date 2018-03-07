@@ -1,4 +1,4 @@
-;;; config.el --- Spacemacs Base Layer configuration File
+;;; config.el --- Spacemacs Defaults Layer configuration File
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
@@ -25,9 +25,9 @@
 (setq dired-dwim-target t)
 
 ;; Regexp for useful and useless buffers for smarter buffer switching
-(defvar spacemacs-useless-buffers-regexp '("*\.\+")
+(defvar spacemacs-useless-buffers-regexp '()
   "Regexp used to determine if a buffer is not useful.")
-(defvar spacemacs-useful-buffers-regexp '("\\*scratch\\*")
+(defvar spacemacs-useful-buffers-regexp '()
   "Regexp used to define buffers that are useful despite matching
 `spacemacs-useless-buffers-regexp'.")
 
@@ -153,7 +153,7 @@ It runs `tabulated-list-revert-hook', then calls `tabulated-list-print'."
 ;; ---------------------------------------------------------------------------
 
 ;; scratch buffer empty
-(setq initial-scratch-message nil)
+(setq initial-scratch-message dotspacemacs-initial-scratch-message)
 ;; don't create backup~ files
 (setq make-backup-files nil)
 

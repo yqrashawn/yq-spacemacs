@@ -9,8 +9,15 @@
 ;;
 ;;; License: GPLv3
 
+
 
-;; Variables
+;; Layer Variables
+
+(defvar ivy-enable-advanced-buffer-information nil
+  "If non-nil, enable `ivy-rich' which adds information on buffers.")
+
+
+;; Private Variables
 
 (defvar spacemacs--counsel-commands
   '(;; --line-number forces line numbers (disabled by default on windows)

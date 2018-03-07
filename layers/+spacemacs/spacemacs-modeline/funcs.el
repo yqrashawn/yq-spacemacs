@@ -9,6 +9,24 @@
 ;;
 ;;; License: GPLv3
 
+(defun spacemacs/get-mode-line-theme-name ()
+  "Return the mode-line theme name."
+  (if (listp dotspacemacs-mode-line-theme)
+      (car dotspacemacs-mode-line-theme)
+    dotspacemacs-mode-line-theme))
+
+(defun spacemacs/mode-line-separator ()
+  "Return the separator type for the mode-line.
+Return nil if no separator is defined."
+  (when (listp dotspacemacs-mode-line-theme)
+    (plist-get (cdr dotspacemacs-mode-line-theme) :separator)))
+
+(defun spacemacs/mode-line-separator-scale ()
+  "Return the separator scale for the mode-line.
+Return nil if no scale is defined."
+  (when (listp dotspacemacs-mode-line-theme)
+    (plist-get (cdr dotspacemacs-mode-line-theme) :separator-scale)))
+
 
 ;; spaceline
 
@@ -51,3 +69,15 @@
                             unicode
                           (if ascii ascii unicode))))
               (diminish mode dim))))))))
+
+
+;; Vim powerline
+
+(defun spacemacs//set-vimish-powerline-for-startup-buffers ()
+  "Set the powerline for buffers created when Emacs starts."
+  (dolist (buffer '("*Messages*" "*spacemacs*" "*Compile-Log*"))
+    (when (get-buffer buffer)
+      (with-current-buffer buffer
+        (setq-local mode-line-format (default-value 'mode-line-format))
+        (powerline-set-selected-window)
+        (powerline-reset)))))

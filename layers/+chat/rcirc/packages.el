@@ -30,18 +30,18 @@
     :init
     (spacemacs/set-leader-keys "irc" 'helm-rcirc-auto-join-channels)))
 
-(defun rcirc/post-init-persp-mode ()
-  ;; do not save rcirc buffers
-  (with-eval-after-load 'persp-mode
-    (push (lambda (b) (with-current-buffer b (eq major-mode 'rcirc-mode)))
-          persp-filter-save-buffers-functions))
-
-  (spacemacs|define-custom-layout rcirc-spacemacs-layout-name
-    :binding rcirc-spacemacs-layout-binding
-    :body
+(defun rcirc/pre-init-persp-mode ()
+  (spacemacs|use-package-add-hook persp-mode
+    :post-config
     (progn
-      (add-hook 'rcirc-mode-hook #'spacemacs-layouts/add-rcirc-buffer-to-persp)
-      (call-interactively 'spacemacs/rcirc))))
+      (add-to-list 'persp-filter-save-buffers-functions
+                   'spacemacs//rcirc-persp-filter-save-buffers-function)
+      (spacemacs|define-custom-layout rcirc-spacemacs-layout-name
+        :binding rcirc-spacemacs-layout-binding
+        :body
+        (progn
+          (add-hook 'rcirc-mode-hook #'spacemacs//rcirc-buffer-to-persp)
+          (call-interactively #'spacemacs/rcirc))))))
 
 (defun rcirc/init-rcirc ()
   (use-package rcirc
@@ -53,16 +53,17 @@
 
       (spacemacs/set-leader-keys "air" 'spacemacs/rcirc)
       (evil-set-initial-state 'rcirc-mode 'insert))
-    :config
-    (progn
-      ;; (set-input-method "latin-1-prefix")
-      (set (make-local-variable 'scroll-conservatively) 8192)
-
       (setq rcirc-fill-column 80
             rcirc-buffer-maximum-lines 2048
             rcirc-omit-responses '("JOIN" "PART" "QUIT" "NICK" "AWAY" "MODE")
             rcirc-time-format "%Y-%m-%d %H:%M "
-            rcirc-omit-threshold 20)
+            rcirc-omit-threshold 20
+            rcirc-log-directory (concat spacemacs-cache-directory "/rcirc-logs/")
+            rcirc-log-flag t)
+    :config
+    (progn
+      ;; (set-input-method "latin-1-prefix")
+      (set (make-local-variable 'scroll-conservatively) 8192)
 
       ;; Exclude rcirc properties when yanking, in order to be able to send mails
       ;; for example.
@@ -82,8 +83,6 @@
 
       ;; Minimal logging to `~/.emacs.d/.cache/rcirc-logs/'
       ;; by courtesy of Trent Buck.
-      (setq rcirc-log-directory (concat spacemacs-cache-directory "/rcirc-logs/"))
-      (setq rcirc-log-flag t)
       (add-hook 'rcirc-print-hooks 'spacemacs//rcirc-write-log)
 
       ;; dependencies

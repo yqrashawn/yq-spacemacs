@@ -55,6 +55,11 @@ exists. Otherwise, fallback to ~/.spacemacs"))
 `+distributions'. For now available distributions are `spacemacs-base'
 or `spacemacs'.")
 
+(defvar dotspacemacs-gc-cons '(100000000 0.1)
+  "Set `gc-cons-threshold' and `gc-cons-percentage' when startup finishes.
+This is an advanced option and should not be changed unless you suspect
+performance issues due to garbage collection operations.")
+
 (defvar dotspacemacs-elpa-https t
   "If non nil ELPA repositories are contacted via HTTPS whenever it's
 possible. Set it to nil if you have no way to use HTTPS in your
@@ -65,7 +70,7 @@ environment, otherwise it is strongly recommended to let it set to t.")
 
 (defvar dotspacemacs-use-spacelpa nil
   "If non-nil then Spacelpa repository is the primary source to install
-a locked version of packages. If nil then Spacemacs will install the lastest
+a locked version of packages. If nil then Spacemacs will install the latest
 version of packages from MELPA.")
 
 (defvar dotspacemacs-verify-spacelpa-archives nil
@@ -129,6 +134,9 @@ If the value is nil then no banner is displayed.")
 (defvar dotspacemacs-scratch-mode 'text-mode
   "Default major mode of the scratch buffer.")
 
+(defvar dotspacemacs-initial-scratch-message 'nil
+  "Initial message in the scratch buffer.")
+
 (defvar dotspacemacs-check-for-update nil
   "If non nil then spacemacs will check for updates at startup
 when the current branch is not `develop'. Note that checking for
@@ -146,6 +154,14 @@ whenever you start Emacs.")
   "List of themes, the first of the list is loaded when spacemacs starts.
 Press `SPC T n' to cycle to the next theme in the list (works great
 with 2 themes variants, one dark and one light")
+
+(defvar dotspacemacs-mode-line-theme '(spacemacs :separator wave :separator-scale 1.5)
+  "Set the theme for the Spaceline. Supported themes are `spacemacs',
+`all-the-icons', `custom', `vim-powerline' and `vanilla'. The first three
+are spaceline themes. `vanilla' is default Emacs mode-line. `custom' is a
+user defined themes, refer to the DOCUMENTATION.org for more info on how
+to create your own spaceline theme. Value can be a symbol or a list with
+additional properties like '(all-the-icons :separator-scale 1.5).")
 
 (defvar dotspacemacs-frame-title-format "%I@%S"
   "Default format string for a frame title bar, using the
@@ -190,13 +206,9 @@ emacs.")
 (defvar dotspacemacs-default-font '("Source Code Pro"
                                     :size 13
                                     :weight normal
-                                    :width normal
-                                    :powerline-scale 1.1)
-  "Default font, or prioritized list of fonts. `powerline-scale'
-allows to quickly tweak the mode-line size to make separators
-look not too crappy.
-
-Has no effect when running Emacs in terminal.")
+                                    :width normal)
+  "Default font, or prioritized list of fonts. This setting has no effect when
+running Emacs in terminal.")
 
 (defvar dotspacemacs-remap-Y-to-y$ nil
   "If non nil `Y' is remapped to `y$' in Evil states.")
@@ -325,6 +337,9 @@ This variable can also be set to a property list for finer control:
 The property `:enabled-for-modes' takes priority over `:disabled-for-modes' and
 restricts line-number to the specified list of major-mode.")
 
+(defvar dotspacemacs-enable-server t
+  "If non-nil, start an Emacs server if one is not already running.")
+
 (defvar dotspacemacs-persistent-server nil
   "If non nil advises quit functions to keep server open when quitting.")
 
@@ -354,11 +369,6 @@ whitespace for changed lines or `nil' to disable cleanup.")
 (defvar dotspacemacs-search-tools '("rg" "ag" "pt" "ack" "grep")
   "List of search tool executable names. Spacemacs uses the first installed
 tool of the list. Supported tools are `rg', `ag', `pt', `ack' and `grep'.")
-
-(defvar dotspacemacs-default-package-repository 'melpa-stable
-  "The default package repository used if no explicit repository has been
-specified with an installed package.
-NOT USED FOR NOW :-)")
 
 (defvar dotspacemacs-startup-lists '((recents  . 5)
                                     (projects . 7))
@@ -741,11 +751,33 @@ error recovery."
   (dotspacemacs||let-init-test
    (dotspacemacs/init)
    (spacemacs//test-var
-    (lambda (x) (or (member x '(vim emacs hybrid))
-                    (and (listp x)
-                         (spacemacs/mplist-get x :variables))))
+    (lambda (x)
+      (or (member x '(vim
+                      emacs
+                      hybrid))
+          (and (listp x)
+               (eq 'hybrid (car x))
+               (spacemacs/mplist-get x :variables))))
     'dotspacemacs-editing-style
     "is \'vim, \'emacs or \'hybrid or and list with `:variable' keyword")
+   (spacemacs//test-var
+    (lambda (x)
+      (let ((themes '(spacemacs
+                      all-the-icons
+                      custom
+                      vim-powerline
+                      vanilla)))
+        (or (member x themes)
+            (and (listp x)
+                 (memq (car x) themes)
+                 ;; TODO define a function to remove several properties at once
+                 (null (spacemacs/mplist-remove (spacemacs/mplist-remove (cdr x) :separator)
+                                         :separator-scale))))))
+    'dotspacemacs-mode-line-theme
+    (concat
+     "is \'spacemacs, \'all-the-icons, \'custom, \'vim-powerline or 'vanilla "
+     "or a list with `car' one of the previous values and properties one of "
+     "the following: `:separator' or `:separator-scale'"))
    (spacemacs//test-var
     (lambda (x) (member x '(original cache nil)))
     'dotspacemacs-auto-save-file-location (concat "is one of \'original, "

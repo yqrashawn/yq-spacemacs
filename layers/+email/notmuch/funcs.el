@@ -34,7 +34,7 @@
 
 (defun spacemacs//notmuch-message-delete (go-next)
   "Delete message and select GO-NEXT message."
-  (notmuch-search-tag '("+deleted" "-inbox" "-unread"))
+  (notmuch-search-tag notmuch-message-deleted-tags)
   (if (eq 'up go-next )
       (notmuch-search-previous-thread)
     (notmuch-search-next-thread)))
@@ -107,3 +107,15 @@ messages in the current thread"
   (with-current-notmuch-show-message
    (spacemacs//notmuch-open-github-patch (current-buffer))))
 
+
+;; persp
+
+(defun spacemacs//notmuch-persp-filter-save-buffers-function (buffer)
+  "Filter for notmuch layout."
+  (with-current-buffer buffer
+    (memq major-mode notmuch-modes)))
+
+(defun spacemacs//notmuch-buffer-to-persp ()
+  "Add buffer to notmuch layout."
+  (persp-add-buffer (current-buffer)
+                    (persp-get-by-name notmuch-spacemacs-layout-name)))

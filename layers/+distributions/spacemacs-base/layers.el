@@ -1,4 +1,4 @@
-;;; layers.el --- C/C++ layer layers File for Spacemacs
+;;; layers.el --- Spacemacs base distribution layers File
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
@@ -9,4 +9,4 @@
 ;;
 ;;; License: GPLv3
 
-(configuration-layer/declare-layer 'gtags)
+(configuration-layer/declare-layers '(spacemacs-defaults))

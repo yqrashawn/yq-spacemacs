@@ -22,6 +22,7 @@
     - [[#in-terminal][In terminal]]
   - [[#building-and-compilation][Building and Compilation]]
   - [[#debugging][Debugging]]
+  - [[#errors][Errors]]
   - [[#plain-text-markup-languages][Plain Text Markup Languages]]
     - [[#headers][Headers]]
     - [[#insertion-of-common-elements][Insertion of common elements]]
@@ -35,6 +36,7 @@
   - [[#toggles][Toggles]]
   - [[#refactoring][Refactoring]]
   - [[#code-formatting][Code Formatting]]
+  - [[#web-frameworks][Web frameworks]]
   - [[#help-or-documentation][Help or Documentation]]
 - [[#writing-documentation][Writing documentation]]
   - [[#spacing-in-documentation][Spacing in documentation]]
@@ -239,6 +241,15 @@ Notes:
     the spacemacs level and ideally the function should be proposed as a patch
     upstream (major mode repository).
 
+** Errors
+Managment of errors should be put under ~SPC m E~.
+
+| Key Binding | Description                         |
+|-------------+-------------------------------------|
+| ~m E e~     | fix error around point              |
+| ~m E l~     | show errors                         |
+| ~m E L~     | show errors and jump to errors list |
+
 ** Plain Text Markup Languages
 For layers supporting markup languages please follow the following
 keybindings whenever applicable.
@@ -351,6 +362,9 @@ Major-mode code formatting is under prefix ~SPC m =~.
 | ~m = =~     | format thing under point |
 | ~m = b~     | format current buffer    |
 | ~m = f~     | format current function  |
+
+** Web frameworks
+Web frameworks key bindings should go under ~SPC m f~.
 
 ** Help or Documentation
 The base prefix for help commands is ~SPC m h~. Documentation is considered

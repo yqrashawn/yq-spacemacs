@@ -17,11 +17,13 @@
 (setq url-proxy-services
       '(("http" . "127.0.0.1:6152")
         ("https" . "127.0.0.1:6152")))
-(setq gc-cons-threshold 100000000)
 
 ;; (load-file "~/.emacs.d/core/core-versions.el")
 ;; (load-file "~/.emacs.d/core/core-load-paths.el")
 
+;; Avoid garbage collection during startup.
+;; see `SPC h . dotspacemacs-gc-cons' for more info
+(setq gc-cons-threshold 402653184 gc-cons-percentage 0.6)
 (load-file (concat (file-name-directory load-file-name)
                    "core/core-versions.el"))
 (load-file (concat (file-name-directory load-file-name)
@@ -31,12 +33,15 @@
     (error (concat "Your version of Emacs (%s) is too old. "
                    "Spacemacs requires Emacs version %s or above.")
            emacs-version spacemacs-emacs-min-version)
-  (require 'core-spacemacs)
-  (configuration-layer/load-lock-file)
-  (spacemacs/init)
-  (configuration-layer/stable-elpa-download-tarball)
-  (configuration-layer/load)
-  (spacemacs-buffer/display-startup-note)
-  (spacemacs/setup-startup-hook)
-  (require 'server)
-  (unless (server-running-p) (server-start)))
+  ;; Disable file-name-handlers for a speed boost during init
+  (let ((file-name-handler-alist nil))
+    (require 'core-spacemacs)
+    (configuration-layer/load-lock-file)
+    (spacemacs/init)
+    (configuration-layer/stable-elpa-download-tarball)
+    (configuration-layer/load)
+    (spacemacs-buffer/display-startup-note)
+    (spacemacs/setup-startup-hook)
+    (when dotspacemacs-enable-server
+      (require 'server)
+      (unless (server-running-p) (server-start)))))

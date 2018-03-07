@@ -14,8 +14,6 @@
     cc-mode
     disaster
     clang-format
-    cmake-ide
-    cmake-mode
     company
     (company-c-headers :requires company)
     (company-rtags :requires company rtags)
@@ -45,11 +43,11 @@
     :init
     (progn
       (add-to-list 'auto-mode-alist
-                   `("\\.h\\'" . ,c-c++-default-mode-for-headers)))
+                   `("\\.h\\'" . ,c-c++-default-mode-for-headers))
+      (add-hook 'c-mode-common-hook 'spacemacs//c-toggle-auto-newline))
     :config
     (progn
       (require 'compile)
-      (c-toggle-auto-newline 1)
       (dolist (mode c-c++-modes)
         (spacemacs/declare-prefix-for-mode mode "mc" "compile")
         (spacemacs/declare-prefix-for-mode mode "mg" "goto")
@@ -73,30 +71,11 @@
     :if c-c++-enable-clang-support
     :init
     (progn
-      (when c-c++-enable-clang-format-on-save
-        (spacemacs/add-to-hooks 'spacemacs/clang-format-on-save c-c++-mode-hooks))
       (dolist (mode c-c++-modes)
         (spacemacs/declare-prefix-for-mode mode "m=" "format")
         (spacemacs/set-leader-keys-for-major-mode mode
           "==" 'spacemacs/clang-format-region-or-buffer
           "=f" 'spacemacs/clang-format-function)))))
-
-(defun c-c++/init-cmake-ide ()
-  (use-package cmake-ide
-    :if c-c++-enable-cmake-ide-support
-    :config
-    (progn
-      (cmake-ide-setup)
-      (dolist (mode c-c++-modes)
-        (spacemacs/set-leader-keys-for-major-mode mode
-          "cc" 'cmake-ide-compile
-          "pc" 'cmake-ide-run-cmake
-          "pC" 'cmake-ide-maybe-run-cmake
-          "pd" 'cmake-ide-delete-file)))))
-
-(defun c-c++/init-cmake-mode ()
-  (use-package cmake-mode
-    :mode (("CMakeLists\\.txt\\'" . cmake-mode) ("\\.cmake\\'" . cmake-mode))))
 
 (defun c-c++/post-init-company ()
   (when (configuration-layer/package-used-p 'cmake-mode)
@@ -184,9 +163,10 @@
       (add-hook 'rtags-jump-hook 'evil-set-jump)
       (rtags-diagnostics)
       ;; key bindings
-      (define-key evil-normal-state-map (kbd "RET") 'rtags-select-other-window)
-      (define-key evil-normal-state-map (kbd "M-RET") 'rtags-select)
-      (define-key evil-normal-state-map (kbd "q") 'rtags-bury-or-delete)
+      (evil-define-key 'normal rtags-mode-map
+        (kbd "RET")   'rtags-select-other-window
+        (kbd "M-RET") 'rtags-select
+        (kbd "q")     'rtags-bury-or-delete)
       ;; TODO check for consistency with gtags key bindings
       ;; see https://github.com/syl20bnr/spacemacs/blob/develop/layers/+tags/gtags/funcs.el#L70
       (dolist (mode c-c++-modes)
@@ -252,8 +232,8 @@
   (use-package google-c-style
     :if (or 'c-c++-enable-google-style 'c-c++-enable-google-newline)
     :config (progn
-    (when 'c-c++-enable-google-style (add-hook 'c-mode-common-hook 'google-set-c-style))
-    (when 'c-c++-enable-google-newline (add-hook 'c-mode-common-hook 'google-set-c-style)))))
+    (when c-c++-enable-google-style (add-hook 'c-mode-common-hook 'google-set-c-style))
+    (when c-c++-enable-google-newline (add-hook 'c-mode-common-hook 'google-make-newline-indent)))))
 
 (defun c-c++/post-init-semantic ()
   (spacemacs/add-to-hooks 'semantic-mode c-c++-mode-hooks))
@@ -261,10 +241,10 @@
 (defun c-c++/post-init-srefactor ()
   (dolist (mode c-c++-modes)
     (spacemacs/set-leader-keys-for-major-mode mode "r" 'srefactor-refactor-at-point))
-  (spacemacs/add-to-hooks 'spacemacs/lazy-load-srefactor c-c++-mode-hooks))
+  (spacemacs/add-to-hooks 'spacemacs/load-srefactor c-c++-mode-hooks))
 
 (defun c-c++/post-init-stickyfunc-enhance ()
-  (spacemacs/add-to-hooks 'spacemacs/lazy-load-stickyfunc-enhance c-c++-mode-hooks))
+  (spacemacs/add-to-hooks 'spacemacs/load-stickyfunc-enhance c-c++-mode-hooks))
 
 (defun c-c++/post-init-ycmd ()
   (spacemacs/add-to-hooks 'ycmd-mode c-c++-mode-hooks)

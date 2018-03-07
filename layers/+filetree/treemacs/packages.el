@@ -24,7 +24,7 @@
 
 (defun treemacs/init-treemacs ()
   (use-package treemacs
-    :commands treemacs--window-number-ten
+    :commands (treemacs-select-window treemacs--window-number-ten)
     :defer t
     :init
     (spacemacs/set-leader-keys
@@ -41,7 +41,6 @@
             treemacs-is-never-other-window nil
             treemacs-silent-refresh nil
             treemacs-indentation 2
-            treemacs-git-integration t
             treemacs-change-root-without-asking nil
             treemacs-sorting 'alphabetic-desc
             treemacs-show-hidden-files t
@@ -53,7 +52,13 @@
         (treemacs-follow-mode t))
 
       (when treemacs-use-filewatch-mode
-        (treemacs-filewatch-mode t)))))
+        (treemacs-filewatch-mode t))
+
+      ;; this boundp check guards against a new feature that not all treemacs installations will have
+      ;; TODO remove this guard in a few weeks
+      (when (boundp 'treemacs-git-mode)
+        (when (memq treemacs-use-git-mode '(simple extended))
+          (treemacs-git-mode treemacs-use-git-mode))))))
 
 (defun treemacs/init-treemacs-evil ()
   (use-package treemacs-evil
@@ -71,4 +76,7 @@
 (defun treemacs/pre-init-winum ()
   (spacemacs|use-package-add-hook winum
     :post-config
-    (add-to-list 'winum-assign-functions #'treemacs--window-number-ten)))
+    (progn
+      ;; window 0 is reserved for file trees
+      (spacemacs/set-leader-keys "0" #'treemacs-select-window)
+      (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))))

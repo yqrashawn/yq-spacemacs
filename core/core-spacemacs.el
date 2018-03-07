@@ -12,6 +12,7 @@
 (defconst emacs-start-time (current-time))
 
 (require 'subr-x nil 'noerror)
+(require 'core-emacs-backports)
 (require 'page-break-lines)
 (require 'core-debug)
 (require 'core-command-line)
@@ -227,6 +228,8 @@ defer call using `spacemacs-post-user-config-hook'."
      (configuration-layer/display-summary emacs-start-time)
      (spacemacs-buffer//startup-hook)
      (spacemacs/check-for-new-version nil spacemacs-version-check-interval)
-     (setq spacemacs-initialized t))))
+     (setq spacemacs-initialized t)
+     (setq gc-cons-threshold (car dotspacemacs-gc-cons)
+           gc-cons-percentage (cadr dotspacemacs-gc-cons)))))
 
 (provide 'core-spacemacs)

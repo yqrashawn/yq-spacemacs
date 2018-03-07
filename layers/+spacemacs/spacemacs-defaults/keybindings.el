@@ -1,4 +1,4 @@
-;;; keybindings.el --- Spacemacs Base Layer key-bindings File
+;;; keybindings.el --- Spacemacs Defaults Layer key-bindings File
 ;;
 ;; Copyright (c) 2012-2018 Sylvain Benner & Contributors
 ;;
@@ -142,6 +142,7 @@
   "bR"    'spacemacs/safe-revert-buffer
   "bs"    'spacemacs/switch-to-scratch-buffer
   "bu"    'spacemacs/reopen-killed-buffer
+  "bx"    'kill-buffer-and-window
   "bY"    'spacemacs/copy-whole-buffer-to-clipboard
   "bw"    'read-only-mode)
 (dotimes (i 9)
@@ -440,6 +441,7 @@
   "wv"  'split-window-right
   "wV"  'split-window-right-and-focus
   "ww"  'other-window
+  "wx"  'kill-buffer-and-window
   "w/"  'split-window-right
   "w="  'balance-windows-area
   "w+"  'spacemacs/window-layout-toggle

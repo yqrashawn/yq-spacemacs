@@ -22,20 +22,19 @@
     :defer t
     :init
     (progn
-      (spacemacs/declare-prefix "D" "Docker")
+      (spacemacs/declare-prefix "aD" "Docker")
       (evil-leader/set-key
-        "Dc" 'docker-containers
-        "Dd" 'docker-rmi
-        "De" 'docker-unpause
-        "DF" 'docker-pull
-        "Dk" 'docker-rm
-        "Di" 'docker-images
-        "Do" 'docker-stop
-        "DP" 'docker-push
-        "Dp" 'docker-pause
-        "Dr" 'docker-restart
-        "Ds" 'docker-start)
-      (push "\\*docker.+\\*" spacemacs-useful-buffers-regexp)))
+        "aDc" 'docker-containers
+        "aDd" 'docker-rmi
+        "aDe" 'docker-unpause
+        "aDF" 'docker-pull
+        "aDk" 'docker-rm
+        "aDi" 'docker-images
+        "aDo" 'docker-stop
+        "aDP" 'docker-push
+        "aDp" 'docker-pause
+        "aDr" 'docker-restart
+        "aDs" 'docker-start)))
   (with-eval-after-load 'docker-containers
     (evilified-state-evilify-map docker-containers-mode-map
       :mode docker-containers-mode))
@@ -48,7 +47,11 @@
     :defer t))
 
 (defun docker/init-dockerfile-mode ()
-  (use-package docker-mode
+  (use-package dockerfile-mode
     :defer t
-    :config (evil-leader/set-key-for-mode 'dockerfile-mode
-              "mcb" 'dockerfile-build-buffer)))
+    :config
+    (progn
+      (spacemacs/declare-prefix-for-mode 'dockerfile-mode
+        "mc" "compile")
+      (spacemacs/set-leader-keys-for-major-mode 'dockerfile-mode
+        "cb" 'dockerfile-build-buffer))))
