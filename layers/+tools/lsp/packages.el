@@ -37,12 +37,14 @@
 
 (defun lsp/init-lsp-mode ()
   (use-package lsp-mode
+    :defer t
     :config
     (progn
       (spacemacs|hide-lighter lsp-mode))))
 
 (defun lsp/init-lsp-ui ()
   (use-package lsp-ui
+    :defer t
     :init (add-hook 'lsp-mode-hook #'lsp-ui-mode)
     :config
     (progn

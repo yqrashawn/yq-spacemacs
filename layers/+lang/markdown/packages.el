@@ -143,10 +143,13 @@
         ;; next visible heading is not exactly what we want but close enough
         "gl" 'outline-next-visible-heading)
       ;; Promotion, Demotion
-      (define-key markdown-mode-map (kbd "M-h") 'markdown-promote)
-      (define-key markdown-mode-map (kbd "M-j") 'markdown-move-down)
-      (define-key markdown-mode-map (kbd "M-k") 'markdown-move-up)
-      (define-key markdown-mode-map (kbd "M-l") 'markdown-demote))))
+      (add-hook 'spacemacs-editing-style-hook
+                'spacemacs//markdown-hjkl-promotion-demotion)
+      (spacemacs//markdown-hjkl-promotion-demotion dotspacemacs-editing-style)
+      (define-key markdown-mode-map (kbd "M-<down>") 'markdown-move-down)
+      (define-key markdown-mode-map (kbd "M-<left>") 'markdown-promote)
+      (define-key markdown-mode-map (kbd "M-<right>") 'markdown-demote)
+      (define-key markdown-mode-map (kbd "M-<up>") 'markdown-move-up))))
 
 (defun markdown/init-markdown-toc ()
   (use-package markdown-toc

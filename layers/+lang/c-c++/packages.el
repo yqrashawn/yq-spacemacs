@@ -12,29 +12,30 @@
 (setq c-c++-packages
   '(
     cc-mode
-    disaster
     clang-format
     company
     (company-c-headers :requires company)
     (company-rtags :requires company rtags)
     company-ycmd
+    counsel-gtags
+    disaster
     flycheck
     (flycheck-rtags :requires flycheck rtags)
     gdb-mi
     ggtags
-    counsel-gtags
     google-c-style
     helm-cscope
     helm-gtags
     (helm-rtags :requires helm rtags)
     (ivy-rtags :requires ivy rtags)
-    rtags
+    org
     realgud
+    rtags
     semantic
     srefactor
     stickyfunc-enhance
-    ycmd
     xcscope
+    ycmd
     ))
 
 (defun c-c++/init-cc-mode ()
@@ -44,7 +45,8 @@
     (progn
       (add-to-list 'auto-mode-alist
                    `("\\.h\\'" . ,c-c++-default-mode-for-headers))
-      (add-hook 'c-mode-common-hook 'spacemacs//c-toggle-auto-newline))
+      (when c-c++-enable-auto-newline
+        (add-hook 'c-mode-common-hook 'spacemacs//c-toggle-auto-newline)))
     :config
     (progn
       (require 'compile)
@@ -55,16 +57,6 @@
         (spacemacs/set-leader-keys-for-major-mode mode
           "ga" 'projectile-find-other-file
           "gA" 'projectile-find-other-file-other-window)))))
-
-(defun c-c++/init-disaster ()
-  (use-package disaster
-    :defer t
-    :commands (disaster)
-    :init
-    (progn
-      (dolist (mode c-c++-modes)
-        (spacemacs/set-leader-keys-for-major-mode mode
-          "D" 'disaster)))))
 
 (defun c-c++/init-clang-format ()
   (use-package clang-format
@@ -97,7 +89,8 @@
 
 (defun c-c++/init-company-rtags ()
   (use-package company-rtags
-    :if c-c++-enable-rtags-support
+    :if (and c-c++-enable-rtags-support
+             (not (eq c-c++-enable-rtags-support 'no-completion)))
     :defer t
     :init
     (progn
@@ -105,6 +98,23 @@
       (spacemacs|add-company-backends
         :backends company-rtags
         :modes c-mode-common))))
+
+(defun c-c++/post-init-company-ycmd ()
+  (spacemacs|add-company-backends :backends company-ycmd :modes c-mode-common))
+
+(defun c-c++/post-init-counsel-gtags ()
+  (dolist (mode c-c++-modes)
+    (spacemacs/counsel-gtags-define-keys-for-mode mode)))
+
+(defun c-c++/init-disaster ()
+  (use-package disaster
+    :defer t
+    :commands (disaster)
+    :init
+    (progn
+      (dolist (mode c-c++-modes)
+        (spacemacs/set-leader-keys-for-major-mode mode
+          "D" 'disaster)))))
 
 (defun c-c++/post-init-flycheck ()
   (dolist (mode c-c++-modes)
@@ -133,9 +143,18 @@
      ;; Non-nil means display source file containing the main routine at startup
      gdb-show-main t)))
 
-(defun c-c++/post-init-counsel-gtags ()
-  (dolist (mode c-c++-modes)
-    (spacemacs/counsel-gtags-define-keys-for-mode mode)))
+(defun c-c++/init-google-c-style ()
+  (use-package google-c-style
+    :if (or 'c-c++-enable-google-style 'c-c++-enable-google-newline)
+    :config (progn
+              (when c-c++-enable-google-style (add-hook 'c-mode-common-hook 'google-set-c-style))
+              (when c-c++-enable-google-newline (add-hook 'c-mode-common-hook 'google-make-newline-indent)))))
+
+(defun c-c++/pre-init-helm-cscope ()
+  (spacemacs|use-package-add-hook xcscope
+    :post-init
+    (dolist (mode c-c++-modes)
+      (spacemacs/setup-helm-cscope mode))))
 
 (defun c-c++/post-init-helm-gtags ()
   (dolist (mode c-c++-modes)
@@ -201,39 +220,9 @@
           "gX" 'rtags-fix-fixit-at-point
           "gY" 'rtags-cycle-overlays-on-screen)))))
 
-(defun c-c++/init-realgud()
-  (use-package realgud
-    :defer t
-    :commands (realgud:gdb)
-    :init
-    (progn
-      (dolist (mode c-c++-modes)
-        (spacemacs/set-leader-keys-for-major-mode mode
-          "dd" 'realgud:gdb
-          "de" 'realgud:cmd-eval-dwim))
-      (advice-add 'realgud-short-key-mode-setup
-                  :before #'spacemacs//short-key-state)
-      (evilified-state-evilify-map realgud:shortkey-mode-map
-        :eval-after-load realgud
-        :mode realgud-short-key-mode
-        :bindings
-        "s" 'realgud:cmd-next
-        "i" 'realgud:cmd-step
-        "b" 'realgud:cmd-break
-        "B" 'realgud:cmd-clear
-        "o" 'realgud:cmd-finish
-        "c" 'realgud:cmd-continue
-        "e" 'realgud:cmd-eval
-        "r" 'realgud:cmd-restart
-        "q" 'realgud:cmd-quit
-        "S" 'realgud-window-cmd-undisturb-src))))
-
-(defun c-c++/init-google-c-style ()
-  (use-package google-c-style
-    :if (or 'c-c++-enable-google-style 'c-c++-enable-google-newline)
-    :config (progn
-    (when c-c++-enable-google-style (add-hook 'c-mode-common-hook 'google-set-c-style))
-    (when c-c++-enable-google-newline (add-hook 'c-mode-common-hook 'google-make-newline-indent)))))
+(defun c-c++/post-init-realgud()
+  (dolist (mode c-c++-modes)
+    (spacemacs/add-realgud-debugger mode "gdb")))
 
 (defun c-c++/post-init-semantic ()
   (spacemacs/add-to-hooks 'semantic-mode c-c++-mode-hooks))
@@ -254,17 +243,12 @@
     (spacemacs/set-leader-keys-for-major-mode mode
       "gG" 'ycmd-goto-imprecise)))
 
-(defun c-c++/post-init-company-ycmd ()
-  (spacemacs|add-company-backends :backends company-ycmd :modes c-mode-common))
+(defun c-c++/pre-init-org ()
+  (spacemacs|use-package-add-hook org
+    :post-config (add-to-list 'org-babel-load-languages '(C . t))))
 
 (defun c-c++/pre-init-xcscope ()
   (spacemacs|use-package-add-hook xcscope
     :post-init
     (dolist (mode c-c++-modes)
       (spacemacs/set-leader-keys-for-major-mode mode "gi" 'cscope-index-files))))
-
-(defun c-c++/pre-init-helm-cscope ()
-  (spacemacs|use-package-add-hook xcscope
-    :post-init
-    (dolist (mode c-c++-modes)
-      (spacemacs/setup-helm-cscope mode))))

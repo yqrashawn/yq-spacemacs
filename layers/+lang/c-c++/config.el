@@ -17,6 +17,9 @@
 (defconst c-c++-mode-hooks '(c-mode-hook c++-mode-hook)
   "Primary hooks of the `c-c++' layer.")
 
+(defvar c-c++-enable-auto-newline nil
+  "If non nil then enables the `Auto-newline' minor mode.")
+
 (defvar c-c++-enable-clang-support nil
   "If non nil Clang related packages and configuration are enabled.")
 
@@ -29,7 +32,8 @@
   `c-mode-common-hook'.")
 
 (defvar c-c++-enable-rtags-support nil
-  "If non nil Rtags related packages and configuration are enabled.")
+  "If non nil Rtags related packages and configuration are enabled.
+  If `no-completion', enable all but completion.")
 
 (defvar c-c++-enable-clang-format-on-save nil
   "If non-nil, automatically format code with ClangFormat on

@@ -16,6 +16,7 @@
         gitattributes-mode
         gitconfig-mode
         gitignore-mode
+        gitignore-templates
         git-commit
         git-link
         git-messenger
@@ -23,8 +24,7 @@
         (helm-gitignore :requires helm)
         magit
         magit-gitflow
-        ;; not compatible with magit 2.1 at the time of release
-        ;; magit-svn
+        magit-svn
         (orgit :requires org)
         smeargle
         ))
@@ -115,11 +115,21 @@
   (use-package gitignore-mode
     :defer t))
 
-(defun git/init-magit ()
-  (use-package magit
+(defun git/init-gitignore-templates ()
+  (use-package gitignore-templates
     :defer t
     :init
+    (spacemacs/set-leader-keys-for-major-mode 'gitignore-mode
+      "i" 'gitignore-templates-insert)
+    (spacemacs/set-leader-keys
+      "gfi" 'gitignore-templates-new-file)))
+
+(defun git/init-magit ()
+  (use-package magit
+    :defer (spacemacs/defer)
+    :init
     (progn
+      (spacemacs|require 'magit)
       (setq magit-completing-read-function
             (if (configuration-layer/layer-used-p 'ivy)
                 'ivy-completing-read
@@ -136,7 +146,8 @@
         "gb"  'spacemacs/git-blame-micro-state
         "gc"  'magit-clone
         "gff" 'magit-find-file
-        "gfh" 'magit-log-buffer-file
+        "gfl" 'magit-log-buffer-file
+        "gfd" 'magit-diff-buffer-file-popup
         "gi"  'magit-init
         "gL"  'magit-list-repositories
         "gm"  'magit-dispatch-popup
@@ -205,10 +216,9 @@ Press [_b_] again to blame further in the history, [_q_] to go up or quit."
     :if git-enable-magit-svn-plugin
     :commands turn-on-magit-svn
     :init (add-hook 'magit-mode-hook 'turn-on-magit-svn)
-    :config
-    (progn
-      (evil-define-key 'emacs magit-status-mode-map
-        "N" 'magit-key-mode-popup-svn))))
+    :config (progn
+              (spacemacs|diminish magit-svn-mode "SVN")
+              (define-key magit-mode-map "~" 'magit-svn-popup))))
 
 (defun git/init-orgit ())
 
