@@ -12,7 +12,6 @@
 (setq spacemacs-editing-visual-packages
       '(
         ;; default
-        adaptive-wrap
         (centered-buffer-mode :location local)
         column-enforce-mode
         (hide-comnt :location local)
@@ -28,12 +27,6 @@
         ))
 
 ;; Initialization of packages
-
-(defun spacemacs-editing-visual/init-adaptive-wrap ()
-  (use-package adaptive-wrap
-    :config
-    (progn
-      (add-hook 'visual-line-mode-hook 'adaptive-wrap-prefix-mode))))
 
 (defun spacemacs-editing-visual/init-centered-buffer-mode ())
 
@@ -152,8 +145,10 @@
 
 (defun spacemacs-editing-visual/init-volatile-highlights ()
   (use-package volatile-highlights
+    :defer (spacemacs/defer 2)
     :config
     (progn
+      (require 'volatile-highlights)
       ;; additional extensions
       ;; evil
       (vhl/define-extension 'evil

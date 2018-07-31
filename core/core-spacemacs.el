@@ -9,11 +9,12 @@
 ;;
 ;;; License: GPLv3
 (setq message-log-max 16384)
-(defconst emacs-start-time (current-time))
 
 (require 'subr-x nil 'noerror)
 (require 'core-emacs-backports)
+(require 'core-env)
 (require 'page-break-lines)
+(require 'core-hooks)
 (require 'core-debug)
 (require 'core-command-line)
 (require 'core-configuration-layer)
@@ -36,19 +37,6 @@
   "Spacemacs customizations."
   :group 'starter-kit
   :prefix 'spacemacs-)
-
-;; loading progress bar variables
-(defvar spacemacs-loading-char ?█)
-(defvar spacemacs-loading-string "")
-(defvar spacemacs-loading-counter 0)
-(defvar spacemacs-loading-value 0)
-;; (defvar spacemacs-loading-text "Loading")
-;; (defvar spacemacs-loading-done-text "Ready!")
-(defvar spacemacs-loading-dots-chunk-count 3)
-(defvar spacemacs-loading-dots-count (window-total-size nil 'width))
-(defvar spacemacs-loading-dots-chunk-size
-  (/ spacemacs-loading-dots-count spacemacs-loading-dots-chunk-count))
-(defvar spacemacs-loading-dots-chunk-threshold 0)
 
 (defvar spacemacs-post-user-config-hook nil
   "Hook run after dotspacemacs/user-config")
@@ -86,7 +74,8 @@ the final step of executing code in `emacs-startup-hook'.")
     (unless (frame-parameter nil 'fullscreen)
       (toggle-frame-maximized))
     (add-to-list 'default-frame-alist '(fullscreen . maximized)))
-  (dotspacemacs|call-func dotspacemacs/user-init "Calling dotfile user init...")
+  (spacemacs|unless-dumping
+    (dotspacemacs|call-func dotspacemacs/user-init "Calling dotfile user init..."))
   ;; Given the loading process of Spacemacs we have no choice but to set the
   ;; custom settings twice:
   ;; - once at the very beginning of startup (here)
@@ -127,7 +116,7 @@ the final step of executing code in `emacs-startup-hook'.")
    ;; believe me? Go ahead, try it. After you'll have notice that this was true,
    ;; increase the counter bellow so next people will give it more confidence.
    ;; Counter = 1
-   (message "Setting the font...")
+   (spacemacs-buffer/message "Setting the font...")
    (unless (spacemacs/set-default-font dotspacemacs-default-font)
      (spacemacs-buffer/warning
       "Cannot find any of the specified fonts (%s)! Font settings may not be correct."
@@ -157,6 +146,10 @@ the final step of executing code in `emacs-startup-hook'.")
   ;; check for new version
   (if dotspacemacs-mode-line-unicode-symbols
       (setq-default spacemacs-version-check-lighter "[⇪]"))
+  ;; load environment variables
+  (if (fboundp 'dotspacemacs/user-env)
+      (dotspacemacs/call-user-env)
+    (spacemacs/load-spacemacs-env))
   ;; install the dotfile if required
   (dotspacemacs/maybe-install-dotfile))
 
@@ -202,7 +195,8 @@ defer call using `spacemacs-post-user-config-hook'."
     (add-hook 'spacemacs-post-user-config-hook func)))
 
 (defun spacemacs/setup-startup-hook ()
-  "Add post init processing."
+  "Add post init processing.
+Note: the hooked function is not executed when in dumped mode."
   (add-hook
    'emacs-startup-hook
    (defun spacemacs/startup-hook ()
@@ -214,9 +208,9 @@ defer call using `spacemacs-post-user-config-hook'."
      ;; Ultimate configuration decisions are given to the user who can defined
      ;; them in his/her ~/.spacemacs file
      (dotspacemacs|call-func dotspacemacs/user-config
-                             "Calling dotfile user config...")
+                   "Calling dotfile user config...")
      (dotspacemacs|call-func dotspacemacs/emacs-custom-settings
-                             "Calling dotfile Emacs custom settings...")
+                   "Calling dotfile Emacs custom settings...")
      (run-hooks 'spacemacs-post-user-config-hook)
      (setq spacemacs-post-user-config-hook-run t)
      (when (fboundp dotspacemacs-scratch-mode)

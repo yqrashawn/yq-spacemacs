@@ -29,6 +29,7 @@
         maven-test-mode
         (meghanada :toggle (not (version< emacs-version "25.1")))
         mvn
+        org
         ))
 
 (defun java/post-init-company ()
@@ -197,7 +198,6 @@
           "br"     'ensime-sbt-do-run
 
           "ct"     'ensime-typecheck-current-buffer
-          "cT"     'ensime-typecheck-all
 
           "dA"     'ensime-db-attach
           "db"     'ensime-db-set-break
@@ -217,26 +217,18 @@
           "Ds"     'ensime
 
           "Ee"     'ensime-print-errors-at-point
-          "El"     'ensime-show-all-errors-and-warnings
           "Es"     'ensime-stacktrace-switch
 
           "gp"     'ensime-pop-find-definition-stack
-          "gi"     'ensime-goto-impl
-          "gt"     'ensime-goto-test
 
           "hh"     'ensime-show-doc-for-symbol-at-point
           "hT"     'ensime-type-at-point-full-name
           "ht"     'ensime-type-at-point
           "hu"     'ensime-show-uses-of-symbol-at-point
 
-          "ii"     'ensime-inspect-type-at-point
-          "iI"     'ensime-inspect-type-at-point-other-frame
-          "ip"     'ensime-inspect-project-package
-
           "ra"     'ensime-refactor-add-type-annotation
           "rd"     'ensime-refactor-diff-inline-local
           "rD"     'ensime-undo-peek
-          "rf"     'ensime-format-source
           "ri"     'ensime-refactor-diff-organize-imports
           "rm"     'ensime-refactor-diff-extract-method
           "rr"     'ensime-refactor-diff-rename
@@ -296,7 +288,7 @@
 ;;       (progn
 ;;         (spacemacs//ensime-init 'java-mode t nil)
 ;;         (when (configuration-layer/package-used-p 'company)
-;;           (push 'ensime-company company-backends-java-mode)))
+;;           (add-to-list 'company-backends-java-mode 'ensime-company)))
 ;;       :config
 ;;       (progn
 ;;         (spacemacs/ensime-configure-keybindings 'java-mode)))))
@@ -348,6 +340,10 @@
 
 (defun java/post-init-helm-gtags ()
   (spacemacs/helm-gtags-define-keys-for-mode 'java-mode))
+
+(defun java/pre-init-org ()
+  (spacemacs|use-package-add-hook org
+    :post-config (add-to-list 'org-babel-load-languages '(java . t))))
 
 (defun java/init-java-mode ()
   (use-package java-mode

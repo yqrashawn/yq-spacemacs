@@ -12,7 +12,7 @@
   - [[#perldoc][Perldoc]]
   - [[#pod-and-here-doc][POD and HERE doc]]
   - [[#find-symbol][Find Symbol]]
-  - [[#formating-code][Formating Code]]
+  - [[#formatting-code][Formatting Code]]
 
 * Description
 This layer adds support for the Perl5 language.
@@ -22,6 +22,7 @@ This layer adds support for the Perl5 language.
 - Auto-completion using [[https://github.com/CeleritasCelery/company-plsense][company-plsense]]
 - Format code with =perltidy=
 - Jump to symbol definition
+- Interactive debug via [[https://github.com/realgud/realgud][realgud]] with [[http://search.cpan.org/~rocky/Devel-Trepan-0.73/lib/Devel/Trepan.pm][trepan.pl]]
 
 * Install
 ** Layer
@@ -34,7 +35,7 @@ file.
 
 * Key Bindings
 ** Perldoc
-Browse formated perldocs.
+Browse formatted perldocs.
 
 | Key Binding | Description                     |
 |-------------+---------------------------------|
@@ -56,7 +57,7 @@ Jump to symbol definition.
 | ~SPC m g g~ | jump to symbol definition                 |
 | ~SPC m g G~ | jump to symbol definition in other window |
 
-** Formating Code
+** Formatting Code
 
 | Key Binding | Description                   |
 |-------------+-------------------------------|

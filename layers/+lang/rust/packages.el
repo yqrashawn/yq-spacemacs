@@ -13,13 +13,14 @@
   '(
     cargo
     company
+    counsel-gtags
     racer
     flycheck
     (flycheck-rust :requires flycheck)
     ggtags
-    exec-path-from-shell
     helm-gtags
     rust-mode
+    smartparens
     toml-mode
     ))
 
@@ -90,20 +91,13 @@
     ;; Don't pair lifetime specifiers
     (sp-local-pair 'rust-mode "'" nil :actions nil)))
 
-
-(defun rust/pre-init-exec-path-from-shell ()
-  (spacemacs|use-package-add-hook exec-path-from-shell
-    :pre-config
-    (let ((var "RUST_SRC_PATH"))
-      (unless (or (member var exec-path-from-shell-variables) (getenv var))
-        (push var exec-path-from-shell-variables)))))
-
 (defun rust/init-racer ()
   (use-package racer
     :defer t
     :init
     (progn
       (spacemacs/add-to-hook 'rust-mode-hook '(racer-mode))
+      (spacemacs/add-to-hook 'racer-mode-hook '(eldoc-mode))
       (spacemacs/declare-prefix-for-mode 'rust-mode "mg" "goto")
       (add-to-list 'spacemacs-jump-handlers-rust-mode 'racer-find-definition)
       (spacemacs/declare-prefix-for-mode 'rust-mode "mh" "help")

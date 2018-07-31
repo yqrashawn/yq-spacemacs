@@ -18,6 +18,7 @@
         evil
         flx
         helm-make
+        imenu
         ivy
         ivy-hydra
         (ivy-rich :toggle ivy-enable-advanced-buffer-information)
@@ -37,13 +38,14 @@
     :post-init
     ;; add some functions to ahs transient states
     (setq spacemacs--symbol-highlight-transient-state-doc
-          (concat spacemacs--symbol-highlight-transient-state-doc
-                  "  [_b_] search buffers [_/_] search proj [_f_] search files [_s_] swiper"))
+          (concat
+           spacemacs--symbol-highlight-transient-state-doc
+           "  Search: [_s_] swiper  [_b_] buffers  [_f_] files  [_/_] project"))
     (spacemacs/transient-state-register-add-bindings 'symbol-highlight
-      '(("/" spacemacs/search-project-auto-region-or-symbol :exit t)
+      '(("s" spacemacs/swiper-region-or-symbol :exit t)
         ("b" spacemacs/swiper-all-region-or-symbol :exit t)
         ("f" spacemacs/search-auto-region-or-symbol :exit t)
-        ("s" spacemacs/swiper-region-or-symbol :exit t)))))
+        ("/" spacemacs/search-project-auto-region-or-symbol :exit t)))))
 
 (defun ivy/post-init-bookmark ()
   (spacemacs/set-leader-keys "fb" 'counsel-bookmark))
@@ -73,7 +75,7 @@
         "ry"  'counsel-yank-pop
         "rm"  'counsel-mark-ring
         ;; jumping
-        "sj"  'counsel-imenu
+        "sj"  'spacemacs/counsel-jump-in-buffer
         ;; themes
         "Ts"  'counsel-load-theme
         ;; search
@@ -173,7 +175,7 @@
         "cm" 'helm-make))))
 
 (defun ivy/post-init-imenu ()
-  (spacemacs/set-leader-keys "ji" 'counsel-imenu))
+  (spacemacs/set-leader-keys "ji" 'spacemacs/counsel-jump-in-buffer))
 
 (defun ivy/init-ivy ()
   (use-package ivy
@@ -193,6 +195,9 @@
        'counsel-recentf
        spacemacs--ivy-file-actions)
 
+      ;; add spacemacs/counsel-search command to ivy-highlight-grep-commands
+      (add-to-list 'ivy-highlight-grep-commands 'spacemacs/counsel-search)
+
       ;; mappings to quit minibuffer or enter transient state
       (define-key ivy-minibuffer-map [escape] 'minibuffer-keyboard-quit)
       (define-key ivy-minibuffer-map (kbd "M-SPC") 'hydra-ivy/body)
@@ -201,6 +206,7 @@
       (global-set-key (kbd "C-c C-r") 'ivy-resume)
       (global-set-key (kbd "<f6>") 'ivy-resume)
       ;; Occur
+      (evil-set-initial-state 'ivy-occur-grep-mode 'normal)
       (evil-make-overriding-map ivy-occur-mode-map 'normal)
       (ivy-set-occur 'spacemacs/counsel-search
                      'spacemacs//counsel-occur)

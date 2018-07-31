@@ -59,24 +59,6 @@ jobs:
       - run:
           name: Make sure that this isn't a PR to master
           command: ./.circleci/PR_base
-  # Emacs 24
-  "core Emacs24 (required)":
-    docker:
-      - image: jare/spacemacs-circleci:emacs24
-    working_directory: ~/.emacs.d
-    <<: *steps_core_steps
-
-  "spacemacs-base dist. Emacs24 (required)":
-    docker:
-      - image: jare/spacemacs-circleci:emacs24
-    working_directory: ~/.emacs.d
-    <<: *spacemacs_base_steps
-
-  "spacemacs dist. Emacs24 (required)":
-    docker:
-      - image: jare/spacemacs-circleci:emacs24
-    working_directory: ~/.emacs.d
-    <<: *spacemacs_steps
 
   # Emacs 25
   "core Emacs25 (required)":
@@ -94,6 +76,25 @@ jobs:
   "spacemacs dist. Emacs25 (required)":
     docker:
       - image: jare/spacemacs-circleci:emacs25
+    working_directory: ~/.emacs.d
+    <<: *spacemacs_steps
+
+  # Emacs 26
+  "core Emacs26 (required)":
+    docker:
+      - image: jare/spacemacs-circleci:latest
+    working_directory: ~/.emacs.d
+    <<: *steps_core_steps
+
+  "spacemacs-base dist. Emacs26 (required)":
+    docker:
+      - image: jare/spacemacs-circleci:latest
+    working_directory: ~/.emacs.d
+    <<: *spacemacs_base_steps
+
+  "spacemacs dist. Emacs26 (required)":
+    docker:
+      - image: jare/spacemacs-circleci:latest
     working_directory: ~/.emacs.d
     <<: *spacemacs_steps
 
@@ -119,7 +120,7 @@ jobs:
   # Formatting
   "Formatting (optional)":
     docker:
-      - image: jare/spacemacs-circleci:emacs25
+      - image: jare/spacemacs-circleci:latest
     working_directory: ~/.emacs.d
     steps:
       - checkout
@@ -132,33 +133,30 @@ workflows:
   build:
     jobs:
       - "Validate PR"
-      - "core Emacs24 (required)":
-          requires:
-            - "Validate PR"
-#      - "spacemacs-base dist. Emacs24 (required)":
-#          requires:
-#            - "Validate PR"
-#      - "spacemacs dist. Emacs24 (required)":
-#          requires:
-#            - "Validate PR"
       - "core Emacs25 (required)":
           requires:
             - "Validate PR"
-#      - "spacemacs-base dist. Emacs25 (required)":
-#          requires:
-#            - "Validate PR"
-#      - "spacemacs dist. Emacs25 (required)":
-#          requires:
-#            - "Validate PR"
+      - "spacemacs-base dist. Emacs25 (required)":
+          requires:
+            - "Validate PR"
+      - "core Emacs26 (required)":
+          requires:
+            - "Validate PR"
+      - "spacemacs-base dist. Emacs26 (required)":
+          requires:
+            - "Validate PR"
+      - "spacemacs dist. Emacs25 (required)":
+          requires:
+            - "Validate PR"
       - "core Emacs snapshot (optional)":
           requires:
             - "Validate PR"
-#      - "spacemacs-base dist. Emacs snapshot (optional)":
-#          requires:
-#            - "Validate PR"
-#      - "spacemacs dist. Emacs snapshot (optional)":
-#          requires:
-#            - "Validate PR"
+      - "spacemacs-base dist. Emacs snapshot (optional)":
+          requires:
+            - "Validate PR"
+      - "spacemacs dist. Emacs snapshot (optional)":
+          requires:
+            - "Validate PR"
       - "Formatting (optional)":
           requires:
             - "Validate PR"

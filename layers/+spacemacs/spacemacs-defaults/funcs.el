@@ -468,7 +468,9 @@ If the universal prefix argument is used then will the windows too."
 
 ;; from http://dfan.org/blog/2009/02/19/emacs-dedicated-windows/
 (defun spacemacs/toggle-current-window-dedication ()
-  "Toggle dedication state of a window."
+  "Toggle dedication state of a window. Commands that change the buffer that a
+  window is displaying will not typically change the buffer displayed by
+  a dedicated window."
  (interactive)
  (let* ((window    (selected-window))
         (dedicated (window-dedicated-p window)))
@@ -477,15 +479,96 @@ If the universal prefix argument is used then will the windows too."
             (if dedicated "no longer " "")
             (buffer-name))))
 
-;; http://camdez.com/blog/2013/11/14/emacs-show-buffer-file-name/
-(defun spacemacs/show-and-copy-buffer-filename ()
-  "Show and copy the full path to the current file in the minibuffer."
+
+;; Copy file path
+
+(defun spacemacs--directory-path ()
+  "Retrieve the directory path of the current buffer.
+
+If the buffer is not visiting a file, use the `list-buffers-directory'
+variable as a fallback to display the directory, useful in buffers like the
+ones created by `magit' and `dired'.
+
+Returns:
+  - A string containing the directory path in case of success.
+  - `nil' in case the current buffer does not have a directory."
+  (when-let (directory-name (if-let (file-name (buffer-file-name))
+                                (file-name-directory file-name)
+                              list-buffers-directory))
+    (file-truename directory-name)))
+
+(defun spacemacs--file-path ()
+  "Retrieve the file path of the current buffer.
+
+Returns:
+  - A string containing the file path in case of success.
+  - `nil' in case the current buffer does not have a directory."
+  (when-let (file-path (buffer-file-name))
+    (file-truename file-path)))
+
+(defun spacemacs--file-path-with-line ()
+  "Retrieve the file path of the current buffer, including line number.
+
+Returns:
+  - A string containing the file path in case of success.
+  - `nil' in case the current buffer does not have a directory."
+  (when-let (file-path (spacemacs--file-path))
+    (concat file-path ":" (number-to-string (line-number-at-pos)))))
+
+(defun spacemacs--file-path-with-line-column ()
+  "Retrieve the file path of the current buffer, including line and column number.
+
+Returns:
+  - A string containing the file path in case of success.
+  - `nil' in case the current buffer does not have a directory."
+  (when-let (file-path (spacemacs--file-path-with-line))
+    (concat
+      file-path
+      ":"
+      (number-to-string (if (and
+                              ;; Emacs 26 introduced this variable.
+                              ;; Remove this check once 26 becomes the minimum version.
+                              (boundp column-number-indicator-zero-based)
+                              (not column-number-indicator-zero-based))
+                            (1+ (current-column))
+                          (current-column))))))
+
+(defun spacemacs/copy-directory-path ()
+  "Copy and show the directory path of the current buffer.
+
+If the buffer is not visiting a file, use the `list-buffers-directory'
+variable as a fallback to display the directory, useful in buffers like the
+ones created by `magit' and `dired'."
   (interactive)
-  ;; list-buffers-directory is the variable set in dired buffers
-  (let ((file-name (or (buffer-file-name) list-buffers-directory)))
-    (if file-name
-        (message (kill-new file-name))
-      (error "Buffer not visiting a file"))))
+  (if-let (directory-path (spacemacs--directory-path))
+      (message "%s" (kill-new directory-path))
+    (message "WARNING: Current buffer does not have a directory!")))
+
+(defun spacemacs/copy-file-path ()
+  "Copy and show the file path of the current buffer."
+  (interactive)
+  (if-let (file-path (spacemacs--file-path))
+      (message "%s" (kill-new file-path))
+    (message "WARNING: Current buffer is not attached to a file!")))
+
+(defun spacemacs/copy-file-path-with-line ()
+  "Copy and show the file path of the current buffer, including line number."
+  (interactive)
+  (if-let (file-path (spacemacs--file-path-with-line))
+      (message "%s" (kill-new file-path))
+    (message "WARNING: Current buffer is not attached to a file!")))
+
+(defun spacemacs/copy-file-path-with-line-column ()
+  "Copy and show the file path of the current buffer, including line and column number.
+
+This function respects the value of the `column-number-indicator-zero-based'
+variable."
+  (interactive)
+  (if-let (file-path (spacemacs--file-path-with-line-column))
+      (message "%s" (kill-new file-path))
+    (message "WARNING: Current buffer is not attached to a file!")))
+
+
 
 ;; adapted from bozhidar
 ;; http://emacsredux.com/blog/2013/05/18/instant-access-to-init-dot-el/
@@ -516,7 +599,8 @@ buffer in a split window."
       ('left  (split-window-horizontally))
       ('below (spacemacs/split-window-vertically-and-switch))
       ('above (split-window-vertically))
-      ('right (spacemacs/split-window-horizontally-and-switch)))
+      ('right (spacemacs/split-window-horizontally-and-switch))
+      ('frame (select-frame (make-frame))))
     ;; Prompt to save on `save-some-buffers' with positive PRED
     (with-current-buffer newbuf
       (setq-local buffer-offer-save t))
@@ -548,6 +632,12 @@ in a split window to the right."
   (interactive)
   (spacemacs/new-empty-buffer 'right))
 
+(defun spacemacs/new-empty-buffer-new-frame ()
+  "Create a new buffer called untitled(<n>),
+in a new frame."
+  (interactive)
+  (spacemacs/new-empty-buffer 'frame))
+
 ;; from https://gist.github.com/timcharper/493269
 (defun spacemacs/split-window-vertically-and-switch ()
   (interactive)
@@ -559,18 +649,148 @@ in a split window to the right."
   (split-window-horizontally)
   (other-window 1))
 
-(defun spacemacs/layout-triple-columns ()
-  " Set the layout to triple columns. "
-  (interactive)
-  (delete-other-windows)
-  (dotimes (i 2) (split-window-right))
+
+;; Window Split
+
+(defun spacemacs--window-split-splittable-windows ()
+  (seq-remove
+    (lambda (window)
+      ;; TODO: find a way to identify unsplittable side windows reliably!
+      nil)
+    (spacemacs--window-split-non-ignored-windows)))
+
+(defun spacemacs--window-split-non-ignored-windows ()
+  "Determines the list of windows to be deleted."
+  (seq-filter
+    (lambda (window)
+      (let* ((name (buffer-name (window-buffer window)))
+              (prefixes-matching
+                (seq-filter
+                  (lambda (prefix) (string-prefix-p prefix name))
+                  spacemacs-window-split-ignore-prefixes)))
+        (not prefixes-matching)))
+    (window-list (selected-frame))))
+
+(defun spacemacs/window-split-default-delete ()
+  "Deletes other windows, except a list of excluded ones."
+  (if spacemacs-window-split-ignore-prefixes
+      (let* ((deletable (spacemacs--window-split-non-ignored-windows))
+              (splittable (spacemacs--window-split-splittable-windows)))
+        (when splittable
+          (let* ((selected (car splittable))
+                  (to-delete (delq selected deletable)))
+            (select-window selected)
+            (dolist (window to-delete) (delete-window window)))))
+    (delete-other-windows)))
+
+(defvar spacemacs-window-split-ignore-prefixes nil
+  "Prefixes for windows that are not deleted when changing split layout.
+
+You can add an entry here by using the following:
+  (add-to-list 'spacemacs-window-split-ignore-prefixes \"Buffer prefix\")")
+
+(defvar spacemacs-window-split-delete-function 'spacemacs/window-split-default-delete
+  "Function used to delete other windows when changing layout.
+
+Used as a callback by the following functions:
+  - spacemacs/window-split-grid
+  - spacemacs/window-split-triple-columns
+  - spacemacs/window-split-double-columns
+  - spacemacs/window-split-single-column
+
+Possible values:
+  - 'spacemacs/window-split-default-delete (default)
+  - 'delete-other-windows
+  - 'treemacs-delete-other-windows (when using the treemacs package)
+  - a lambda: (lambda () (delete-other-windows))
+  - a custom function:
+    (defun my-delete-other-windows () (delete-other-windows))
+    (setq spacemacs-window-split-delete-function 'my-delete-other-windows)")
+
+(defun spacemacs/window-split-grid (&optional purge)
+  "Set the layout to a 2x2 grid.
+
+Uses the funcion defined in `spacemacs-window-split-delete-function' as a means to
+remove windows.
+
+When called with a prefix argument, it uses `delete-other-windows' as a means
+to remove windows, regardless of the value in `spacemacs-window-split-delete-function'."
+  (interactive "P")
+  (if purge
+      (let ((ignore-window-parameters t))
+        (delete-other-windows))
+    (funcall spacemacs-window-split-delete-function))
+  (if (spacemacs--window-split-splittable-windows)
+      (let* ((previous-files (seq-filter #'buffer-file-name
+                               (delq (current-buffer) (buffer-list))))
+              (second (split-window-below))
+              (third (split-window-right))
+              (fourth (split-window second nil 'right)))
+        (set-window-buffer third (or (car previous-files) "*scratch*"))
+        (set-window-buffer second (or (cadr previous-files) "*scratch*"))
+        (set-window-buffer fourth (or (caddr previous-files) "*scratch*"))
+        (balance-windows))
+    (message "There are no main windows available to split!")))
+
+(defun spacemacs/window-split-triple-columns (&optional purge)
+  "Set the layout to triple columns.
+
+Uses the funcion defined in `spacemacs-window-split-delete-function' as a means to
+remove windows.
+
+When called with a prefix argument, it uses `delete-other-windows' as a means
+to remove windows, regardless of the value in `spacemacs-window-split-delete-function'."
+  (interactive "P")
+  (if purge
+      (let ((ignore-window-parameters t))
+        (delete-other-windows))
+    (funcall spacemacs-window-split-delete-function))
+  (if (spacemacs--window-split-splittable-windows)
+      (let* ((previous-files (seq-filter #'buffer-file-name
+                               (delq (current-buffer) (buffer-list))))
+              (second (split-window-right))
+              (third (split-window second nil 'right)))
+        (set-window-buffer second (or (car previous-files) "*scratch*"))
+        (set-window-buffer third (or (cadr previous-files) "*scratch*"))
+        (balance-windows))
+    (message "There are no main windows available to split!")))
+
+(defun spacemacs/window-split-double-columns (&optional purge)
+  "Set the layout to double columns.
+
+Uses the funcion defined in `spacemacs-window-split-delete-function' as a means to
+remove windows.
+
+When called with a prefix argument, it uses `delete-other-windows' as a means
+to remove windows, regardless of the value in `spacemacs-window-split-delete-function'."
+  (interactive "P")
+  (if purge
+      (let ((ignore-window-parameters t))
+        (delete-other-windows))
+    (funcall spacemacs-window-split-delete-function))
+  (if (spacemacs--window-split-splittable-windows)
+      (let* ((previous-files (seq-filter #'buffer-file-name
+                               (delq (current-buffer) (buffer-list)))))
+        (set-window-buffer (split-window-right) (or (car previous-files) "*scratch*"))
+        (balance-windows))
+    (message "There are no main windows available to split!")))
+
+(defun spacemacs/window-split-single-column (&optional purge)
+  "Set the layout to single column.
+
+Uses the funcion defined in `spacemacs-window-split-delete-function' as a means to
+remove windows.
+
+When called with a prefix argument, it uses `delete-other-windows' as a means
+to remove windows, regardless of the value in `spacemacs-window-split-delete-function'."
+  (interactive "P")
+  (if purge
+      (let ((ignore-window-parameters t))
+        (delete-other-windows))
+    (funcall spacemacs-window-split-delete-function))
   (balance-windows))
 
-(defun spacemacs/layout-double-columns ()
-  " Set the layout to double columns. "
-  (interactive)
-  (delete-other-windows)
-  (split-window-right))
+
 
 (defun spacemacs/insert-line-above-no-indent (count)
   "Insert a new line above with no indentation."
@@ -1019,7 +1239,7 @@ using a visual block/rectangle selection."
   (interactive "r")
   (let (words
         alist_words_compare
-        (formated "")
+        (formatted "")
         (overview (call-interactively 'count-words)))
     (save-excursion
       (goto-char start)
@@ -1044,12 +1264,12 @@ Compare them on count first,and in case of tie sort them alphabetically."
       (let* ((word (pop words))
              (name (car word))
              (count (cdr word)))
-        (setq formated (concat formated (format "[%s: %d], " name count)))))
+        (setq formatted (concat formatted (format "[%s: %d], " name count)))))
     (when (interactive-p)
-      (if (> (length formated) 2)
+      (if (> (length formatted) 2)
           (message (format "%s\nWord count: %s"
                            overview
-                           (substring formated 0 -2)))
+                           (substring formatted 0 -2)))
         (message "No words.")))
     words))
 
@@ -1161,10 +1381,17 @@ if prefix argument ARG is given, switch to it in an other, possibly new window."
   "Return non-nil if line numbers should be enabled for current buffer.
 Decision is based on `dotspacemacs-line-numbers'."
   (and dotspacemacs-line-numbers
-       (spacemacs//linum-current-buffer-is-not-special)
        (spacemacs//linum-curent-buffer-is-not-too-big)
        (or (spacemacs//linum-backward-compabitility)
-           (spacemacs//linum-enabled-for-current-major-mode))))
+           (and (listp dotspacemacs-line-numbers)
+                (spacemacs//linum-enabled-for-current-major-mode)))))
+
+(defun spacemacs/relative-line-numbers-p ()
+  "Return non-nil if line numbers should be relative.
+Decision is based on `dotspacemacs-line-numbers'."
+  (or (eq dotspacemacs-line-numbers 'relative)
+      (and (listp dotspacemacs-line-numbers)
+           (car (spacemacs/mplist-get-values dotspacemacs-line-numbers :relative)))))
 
 (defun spacemacs//linum-on (origfunc &rest args)
   "Advice function to improve `linum-on' function."
@@ -1192,45 +1419,51 @@ Decision is based on `dotspacemacs-line-numbers'."
   (and dotspacemacs-line-numbers
        (not (listp dotspacemacs-line-numbers))
        (or (eq dotspacemacs-line-numbers t)
-           (eq dotspacemacs-line-numbers 'relative))))
-
-(defun spacemacs//linum-current-buffer-is-not-special ()
-  "Return non-nil if current buffer is not a special buffer."
-  (not (string-match-p "\\*.*\\*" (buffer-name))))
+           (eq dotspacemacs-line-numbers 'relative))
+       (derived-mode-p 'prog-mode 'text-mode)))
 
 (defun spacemacs//linum-curent-buffer-is-not-too-big ()
   "Return non-nil if buffer size is not too big."
   (not (and (listp dotspacemacs-line-numbers)
-            (spacemacs/mplist-get dotspacemacs-line-numbers :size-limit-kb)
+            (spacemacs/mplist-get-values dotspacemacs-line-numbers :size-limit-kb)
             (> (buffer-size)
-               (* 1000 (car (spacemacs/mplist-get dotspacemacs-line-numbers
+               (* 1000 (car (spacemacs/mplist-get-values dotspacemacs-line-numbers
                                                   :size-limit-kb)))))))
 
-;; mode in :enabled, not in :disabled ==> t
-;; mode not in :enabled, in :disabled ==> nil
-;; mode in :enabled, parent in :disabled ==> t
-;; parent in :enabled, mode in :disabled ==> nil
-;; not in :enabled, not in :disabled, :enabled is empty ==> t
-;; not in :enabled, not in :disabled, :enabled is not empty ==> nil
-;; both :enabled and :disabled are empty ==> t
+;; see tests in tests/layers/+distribution/spacemacs-base/line-numbers-utest.el
+;; for the different possible cases
 (defun spacemacs//linum-enabled-for-current-major-mode ()
   "Return non-nil if line number is enabled for current major-mode."
-  (let* ((enabled-for-modes (spacemacs/mplist-get dotspacemacs-line-numbers
-                                                  :enabled-for-modes))
-         (disabled-for-modes (spacemacs/mplist-get dotspacemacs-line-numbers
-                                                   :disabled-for-modes))
-         (enabled-for-parent (apply #'derived-mode-p enabled-for-modes))
+  (let* ((disabled-for-modes (spacemacs/mplist-get-values dotspacemacs-line-numbers
+                                                          :disabled-for-modes))
+         (user-enabled-for-modes (spacemacs/mplist-get-values dotspacemacs-line-numbers
+                                                              :enabled-for-modes))
+         ;; default `enabled-for-modes' to '(prog-mode text-mode), because it is
+         ;; a more sensible default than enabling in all buffers - including
+         ;; Magit buffers, terminal buffers, etc. But don't include prog-mode or
+         ;; text-mode if they're explicitly disabled by user
+         (enabled-for-modes (or user-enabled-for-modes
+                                (seq-difference '(prog-mode text-mode)
+                                                disabled-for-modes
+                                                #'eq)))
+         (enabled-for-parent (or (and (equal enabled-for-modes '(all)) 'all)
+                                 (apply #'derived-mode-p enabled-for-modes)))
          (disabled-for-parent (apply #'derived-mode-p disabled-for-modes)))
     (or
+     ;; special case 'all: enable for any mode that isn't specifically disabled
+     (and (eq enabled-for-parent 'all) (not disabled-for-parent))
      ;; current mode or a parent is in :enabled-for-modes, and there isn't a
      ;; more specific parent (or the mode itself) in :disabled-for-modes
      (and enabled-for-parent
-          ;; handles the case where current major-mode has a parent both in
-          ;; :enabled-for-modes and in :disabled-for-modes. Return non-nil if
-          ;; enabled-for-parent is the more specific parent (IOW doesn't derive
-          ;; from disabled-for-parent)
-          (not (spacemacs/derived-mode-p enabled-for-parent disabled-for-parent)))
-     ;; current mode (or parent) not explicitly disabled, and :enabled-for-modes
-     ;; not explicitly specified by user (meaning if it isn't explicitly
-     ;; disabled then it's enabled)
-     (and (null enabled-for-modes) (not disabled-for-parent)))))
+          (or (not disabled-for-parent)
+              ;; handles the case where current major-mode has a parent both in
+              ;; :enabled-for-modes and in :disabled-for-modes. Return non-nil
+              ;; if enabled-for-parent is the more specific parent (IOW derives
+              ;; from disabled-for-parent)
+              (spacemacs/derived-mode-p enabled-for-parent disabled-for-parent)))
+     ;; current mode (or parent) not explicitly disabled
+     (and (null user-enabled-for-modes)
+          enabled-for-parent            ; mode is one of default allowed modes
+          disabled-for-modes
+          (not disabled-for-parent)))))
+

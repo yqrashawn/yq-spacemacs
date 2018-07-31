@@ -52,8 +52,14 @@
   (use-package spaceline-config
     :if (memq (spacemacs/get-mode-line-theme-name) '(spacemacs all-the-icons custom))
     :init
+    (add-hook 'emacs-startup-hook
+              (lambda ()
+                (spacemacs|add-transient-hook window-configuration-change-hook
+                  (lambda ()
+                    (setq spaceline-byte-compile t)
+                    (spaceline-compile))
+                  lazy-load-spaceline)))
     (progn
-      (add-hook 'spacemacs-post-user-config-hook 'spaceline-compile)
       (add-hook 'spacemacs-post-theme-change-hook
                 'spacemacs/customize-powerline-faces)
       (add-hook 'spacemacs-post-theme-change-hook 'powerline-reset)
@@ -66,24 +72,6 @@
                     (spaceline-compile))
         :documentation "Make the mode-line responsive."
         :evil-leader "tmr")
-      (setq powerline-default-separator
-            (or (and (memq (spacemacs/get-mode-line-theme-name)
-                           '(spacemacs custom))
-                     (spacemacs/mode-line-separator))
-                'wave)
-            powerline-image-apple-rgb (spacemacs/system-is-mac)
-            powerline-scale (or (spacemacs/mode-line-separator-scale) 1.5)
-            powerline-height (spacemacs/compute-mode-line-height))
-      (spacemacs|do-after-display-system-init
-       ;; seems to be needed to avoid weird graphical artefacts with the
-       ;; first graphical client
-       (require 'spaceline)
-       (spaceline-compile)))
-    :config
-    (progn
-      (spacemacs/customize-powerline-faces)
-      (setq spaceline-org-clock-p nil
-            spaceline-highlight-face-func 'spacemacs//evil-state-face)
       ;; Segment toggles
       (dolist (spec '((minor-modes "tmm")
                       (major-mode "tmM")
@@ -101,6 +89,22 @@
                                            (replace-regexp-in-string
                                             "-" " " (format "%S" segment)))
                    :evil-leader ,(cadr spec)))))
+      (setq powerline-default-separator
+            (cond
+             ((spacemacs-is-dumping-p) 'utf-8)
+             ((memq (spacemacs/get-mode-line-theme-name)
+                    '(spacemacs custom))
+              (spacemacs/mode-line-separator))
+             (t 'wave))
+            powerline-image-apple-rgb (eq window-system 'ns)
+            powerline-scale (or (spacemacs/mode-line-separator-scale) 1.5)
+            powerline-height (spacemacs/compute-mode-line-height)
+            spaceline-byte-compile nil))
+    :config
+    (progn
+      (spacemacs/customize-powerline-faces)
+      (setq spaceline-org-clock-p nil
+            spaceline-highlight-face-func 'spacemacs//evil-state-face)
       ;; unicode
       (let ((unicodep (dotspacemacs|symbol-value
                        dotspacemacs-mode-line-unicode-symbols)))
@@ -143,7 +147,7 @@
         (spaceline-info-mode t))
       ;; Enable spaceline for buffers created before the configuration of
       ;; spaceline
-      (spacemacs//set-powerline-for-startup-buffers))))
+      (spacemacs//restore-buffers-powerline))))
 
 (defun spacemacs-modeline/pre-init-spaceline-all-the-icons ()
   (when (eq 'all-the-icons (spacemacs/get-mode-line-theme-name))

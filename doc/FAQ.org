@@ -6,6 +6,7 @@
   - [[#what-is-the-official-pronunciation-of-spacemacs][What is the official pronunciation of Spacemacs?]]
   - [[#why-do-you-call-this-a-distribution-i-dont-see-any-spacemacs-executable][Why do you call this a "distribution", I don't see any "Spacemacs" executable?]]
   - [[#why-are-packages-installed-with-package-install-automatically-deleted-by-spacemacs-when-it-boots][Why are packages installed with =package-install= automatically deleted by Spacemacs when it boots?]]
+  - [[#environment-variables-or-path-are-not-set-properly][Environment variables or PATH are not set properly]]
   - [[#how-to-fix-package-download-errors-when-installing-spacemacs-][How to fix package download errors when installing Spacemacs ?]]
   - [[#how-to-fix-symbols-value-as-variable-is-void-errors-on-startup][How to fix =Symbol's value as variable is void= errors on startup?]]
   - [[#how-to-fix-wrong-type-argument-arrayp-nil-errors-on-startup][How to fix =(wrong-type-argument arrayp nil)= errors on startup?]]
@@ -84,6 +85,12 @@ To install packages that does not belong to any Spacemacs layers, you can:
   manually.
 
 To create a new configuration layer see the [[https://github.com/syl20bnr/spacemacs/blob/master/doc/QUICK_START.org][quick start guide]] for more info.
+
+** Environment variables or PATH are not set properly
+If you use Emacs GUI and don't launch if from a terminal then edit the
+environment variables in the =env= file. You can open this file with
+~SPC f e e~. More information in the =Environment variables= section of the
+[[https://github.com/syl20bnr/spacemacs/blob/master/doc/DOCUMENTATION.org][documentation]].
 
 ** How to fix package download errors when installing Spacemacs ?
 Since 0.105.0 HTTPS protocol is used by default to download packages. If your
@@ -316,6 +323,7 @@ useless. The variable =spacemacs-useful-buffers-regexp= marks buffers matching
 the regexp as useful buffers. Both can be customized the same way.
 
 Examples:
+
 #+BEGIN_SRC emacs-lisp
 ;; Only mark helm buffers as useless
 (setq spacemacs-useless-buffers-regexp '("\\*helm\.\+\\*"))
@@ -371,6 +379,8 @@ include this on your =dotspacemacs/user-config=.
 (add-hook 'ruby-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
 ;; For Javascript
 (add-hook 'js2-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
+;; For all programming modes
+(add-hook 'prog-mode-hook #'(lambda () (modify-syntax-entry ?_ "w")))
 #+END_SRC
 
 ** Setup =$PATH=?
@@ -535,6 +545,7 @@ arguments of the =ag= program.
 
 ** Modify spacemacs documentation look (space-doc-mode)
 You can modify the list of visual enhancements applied by the =space-doc-mode=:
+
 #+BEGIN_SRC emacs-lisp
 (setq spacemacs-space-doc-modificators
       '(center-buffer-mode
@@ -548,6 +559,7 @@ You can modify the list of visual enhancements applied by the =space-doc-mode=:
         org-kbd-face-remap
         resize-inline-images))
 #+END_SRC
+
 By default only =center-buffer-mode= is disabled.
 Both =space-doc-mode= and =center-buffer-mode= can be customized
 with "Easy Customization Interface".
@@ -557,6 +569,7 @@ In vim and evil, pasting over a text would cause it to be copied, hence making i
 the same text multiple times.
 
 To fix this, add the following snippet to your ~user-config~:
+
 #+BEGIN_SRC emacs-lisp
 (defun evil-paste-after-from-0 ()
   (interactive)

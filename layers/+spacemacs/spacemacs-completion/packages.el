@@ -12,6 +12,7 @@
 (setq spacemacs-completion-packages
       '(
         (default-ivy-config :location built-in)
+        flx-ido
         (ido :location built-in)
         (ido-vertical-mode :location built-in)
         ))
@@ -83,6 +84,11 @@ Current Action: %s(ivy-action-name)
       'spacemacs/ivy-transient-state/body)
     ))
 
+(defun spacemacs-completion/init-flx-ido ()
+  (use-package flx-ido
+    :defer t
+    :init (add-hook 'ido-vertical-mode-hook 'flx-ido-mode)))
+
 (defun spacemacs-completion/init-ido ()
   (setq ido-save-directory-list-file
         (concat spacemacs-cache-directory "ido.last")
@@ -92,9 +98,10 @@ Current Action: %s(ivy-action-name)
 
 (defun spacemacs-completion/init-ido-vertical-mode ()
   (use-package ido-vertical-mode
+    :defer t
     :init
     (progn
-      (ido-vertical-mode t)
+      (add-hook 'ido-minibuffer-setup-hook ido-vertical-mode)
       (add-hook 'ido-minibuffer-setup-hook 'spacemacs//ido-minibuffer-setup)
       (add-hook 'ido-setup-hook 'spacemacs//ido-setup)
 
