@@ -60,8 +60,10 @@
               (require 'lsp-vue))))
 
 (defun javascript/post-init-add-node-modules-path ()
-  (spacemacs/add-to-hooks #'add-node-modules-path '(css-mode-hook
-                                                    js2-mode-hook)))
+  (add-hook 'css-mode-hook #'add-node-modules-path)
+  ;; (add-hook 'coffee-mode-hook #'add-node-modules-path)
+  (add-hook 'js2-mode-hook #'add-node-modules-path)
+  (add-hook 'json-mode-hook #'add-node-modules-path))
 
 (defun javascript/post-init-counsel-gtags ()
   (spacemacs/counsel-gtags-define-keys-for-mode 'js2-mode))
@@ -189,7 +191,6 @@
     :defer t
     :init (add-hook 'js2-mode-hook 'lsp-mode)
     :config (require 'lsp-javascript-flow)))
-
 (defun javascript/init-prettier-js ()
   (use-package prettier-js
     :mode (("\\.js\\'" . js2-mode) ("\\.html\\'" . web-mode))

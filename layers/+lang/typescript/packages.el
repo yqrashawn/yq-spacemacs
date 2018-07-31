@@ -21,7 +21,7 @@
         typescript-mode
         web-mode
         yasnippet))
-        
+
 
 (defun typescript/post-init-add-node-modules-path ()
   (spacemacs/add-to-hooks #'add-node-modules-path '(typescript-mode-hook)
