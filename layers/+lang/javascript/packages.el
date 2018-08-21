@@ -20,7 +20,7 @@
         js2-mode
         js2-refactor
         prettier-js
-        (tern :toggle (spacemacs//tern-detect))
+        tern
         lsp-mode
         (vue-mode :location (recipe
                              :fetcher github
