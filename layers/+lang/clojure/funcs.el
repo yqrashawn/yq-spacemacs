@@ -13,21 +13,26 @@
   "Pretty symbols for Clojure's anonymous functions and sets,
    like (λ [a] (+ a 5)), ƒ(+ % 5), and ∈{2 4 6}."
   (font-lock-add-keywords mode
-    `(("(\\(fn\\)[\[[:space:]]"
+    `(("(\\(fn\\)[[[:space:]]"
        (0 (progn (compose-region (match-beginning 1)
-                                 (match-end 1) "λ"))))
-      ("(\\(partial\\)[\[[:space:]]"
+                                 (match-end 1) "λ")
+                 nil)))
+      ("(\\(partial\\)[[[:space:]]"
        (0 (progn (compose-region (match-beginning 1)
-                                 (match-end 1) "Ƥ"))))
-      ("(\\(comp\\)[\[[:space:]]"
+                                 (match-end 1) "Ƥ")
+                 nil)))
+      ("(\\(comp\\)[[[:space:]]"
        (0 (progn (compose-region (match-beginning 1)
-                                 (match-end 1) "∘"))))
+                                 (match-end 1) "∘")
+                 nil)))
       ("\\(#\\)("
        (0 (progn (compose-region (match-beginning 1)
-                                 (match-end 1) "ƒ"))))
+                                 (match-end 1) "ƒ")
+                 nil)))
       ("\\(#\\){"
        (0 (progn (compose-region (match-beginning 1)
-                                 (match-end 1) "∈")))))))
+                                 (match-end 1) "∈")
+                 nil))))))
 
 (defun spacemacs//cider-eval-in-repl-no-focus (form)
   "Insert FORM in the REPL buffer and eval it."

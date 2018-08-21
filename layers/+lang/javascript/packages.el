@@ -27,10 +27,7 @@
                              :repo "codefalling/vue-mode"))
 
         imenu
-        (lsp-javascript-typescript
-         :requires lsp-mode
-         :location (recipe :fetcher github
-                           :repo "emacs-lsp/lsp-javascript"))
+        (lsp-javascript-typescript :requires lsp-mode)
         org
         tern))
 
@@ -103,11 +100,10 @@
 (defun javascript/init-js2-mode ()
   (use-package js2-mode
     :defer t
-    :mode "\\.m?js\\'"
+    :mode (("\\.m?js\\'"  . js2-mode))
     :init
     (progn
-      (add-hook 'js2-mode-local-vars-hook
-                #'spacemacs//javascript-setup-backend)
+      (add-hook 'js2-mode-local-vars-hook #'spacemacs//javascript-setup-backend)
       ;; safe values for backend to be used in directory file variables
       (dolist (value '(lsp tern))
         (add-to-list 'safe-local-variable-values
@@ -189,8 +185,8 @@
   (use-package lsp-javascript-typescript
     :commands lsp-javascript-typescript-enable
     :defer t
-    :init (add-hook 'js2-mode-hook 'lsp-mode)
-    :config (require 'lsp-javascript-flow)))
+    :config (spacemacs//setup-lsp-jump-handler 'js2-mode)))
+
 (defun javascript/init-prettier-js ()
   (use-package prettier-js
     :mode (("\\.js\\'" . js2-mode) ("\\.html\\'" . web-mode))

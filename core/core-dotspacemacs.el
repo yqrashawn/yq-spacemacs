@@ -135,7 +135,7 @@ packages then consider to create a layer, you can also put the
 configuration in `dotspacemacs/user-config'.")
 
 (defvar dotspacemacs--additional-theme-packages '()
-  "Same as `dotspacemacs-additonal-packages' but reserved for themes declared
+  "Same as `dotspacemacs-additional-packages' but reserved for themes declared
 in `dotspacemacs-themes'.")
 
 (defvar dotspacemacs-editing-style 'vim
@@ -262,8 +262,9 @@ auto-save the file in-place, `cache' to auto-save the file to another
 file stored in the cache directory and `nil' to disable auto-saving.")
 
 (defvar dotspacemacs-enable-paste-transient-state nil
-  "If non-nil, the paste transient-state is enabled. While enabled, pressing
-`p' several times cycles through the elements in the `kill-ring'.")
+  "If non-nil, the paste transient-state is enabled. While enabled, after you
+paste something, pressing `C-j' and `C-k' several times cycles through the
+elements in the `kill-ring'.")
 (defvaralias
   'dotspacemacs-enable-paste-micro-state
   'dotspacemacs-enable-paste-transient-state
@@ -517,7 +518,7 @@ Set the variable"
   "Synchronize declared layers in dotfile with spacemacs.
 
 Called with `C-u' skips `dotspacemacs/user-config'.
-Called with `C-u C-u' skips `dotspacemacs/user-config' _and_ preleminary tests."
+Called with `C-u C-u' skips `dotspacemacs/user-config' _and_ preliminary tests."
   (interactive "P")
   (when (file-exists-p dotspacemacs-filepath)
     (with-current-buffer (find-file-noselect dotspacemacs-filepath)

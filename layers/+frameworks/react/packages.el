@@ -17,6 +17,7 @@
     evil-matchit
     flycheck
     js-doc
+    lsp-javascript-typescript
     rjsx-mode
     smartparens
     tern
@@ -50,6 +51,9 @@
   (add-hook 'rjsx-mode-hook 'spacemacs/js-doc-require)
   (spacemacs/js-doc-set-key-bindings 'rjsx-mode))
 
+(defun react/post-init-lsp-javascript-typescript ()
+  (spacemacs//setup-lsp-jump-handler 'rjsx-mode))
+
 (defun react/init-rjsx-mode ()
   (use-package rjsx-mode
     :defer t
@@ -57,7 +61,8 @@
     ;; enable rjsx mode by using magic-mode-alist
     (defun +javascript-jsx-file-p ()
       (and buffer-file-name
-           (equal (file-name-extension buffer-file-name) "js")
+           (or (equal (file-name-extension buffer-file-name) "js")
+               (equal (file-name-extension buffer-file-name) "jsx"))
            (re-search-forward "\\(^\\s-*import React\\|\\( from \\|require(\\)[\"']react\\)"
                               magic-mode-regexp-match-limit t)
            (progn (goto-char (match-beginning 1))
